@@ -83,12 +83,17 @@ int main()
     const char* texture_path[] = {
         "opengl_project/Resource/test_texture.jpg",
         "opengl_project/Resource/test_texture2.jpg",
-        "opengl_project/Resource/test_texture3.jpg"
+        "opengl_project/Resource/test_texture3.jpg",
+        "opengl_project/Resource/test_specular_texture.jpg"
     };
 
     TextureManager texture_manager;
-    texture_manager.loadJPGsFromPath(3, texture_path);
-    texture_manager.setShaderForTexture(&shaderProg);
+    texture_manager.loadJPGsFromPath(4, texture_path);
+    shaderProg.useShader();
+    shaderProg.setInt("material.texture0", 0);
+    shaderProg.setInt("material.specular", 1);
+    float material_shininess = 256.0;
+    //texture_manager.setShaderForTexture(&shaderProg);
 
     // enable depth test
     // ------------------
@@ -147,16 +152,6 @@ int main()
         20, 21, 22,
         20, 22, 23
     };
-
-    float material[] ={
-        // ambient color
-        0.2, 0.2, 0.2,
-        // diffuse color
-        0.5, 0.5, 0.5,
-        // specular color
-        1.0, 1.0, 1.0,
-        // shininess
-        256.0};
         
     glm::vec3 cubePositions[] = {
         glm::vec3(0.0f,  0.0f,  0.0f),
@@ -222,7 +217,11 @@ int main()
 
         // lighting
         float light_position[3] = { 10.0, 5.0, 5.0};
-        float light_color[3] = { 1.0, 1.0, 0.0 };
+        float light_color[] = {
+            0.2, 0.2, 0.2,
+            0.7, 0.7, 0.7,
+            1.0, 1.0, 1.0
+        };
         glm::vec3 camera_position = camera.getPosition();
 
         // render part
@@ -238,13 +237,13 @@ int main()
         shaderProg.setFloat("u_mouse", float(mouse_position[0]), float(window_size[1]) - float(mouse_position[1]));
         shaderProg.setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
 
-        shaderProg.setFloat("material.ambient_color", material[0], material[1], material[2]);
-        shaderProg.setFloat("material.diffuse_color", material[3], material[4], material[5]);
-        shaderProg.setFloat("material.specular_color", material[6], material[7], material[8]);
-        shaderProg.setFloat("material.shininess", material[9]);
+        shaderProg.setFloat("material.shininess", material_shininess);
 
-        shaderProg.setFloat("light_position", light_position[0], light_position[1], light_position[2]);
-        shaderProg.setFloat("light_color", light_color[0], light_color[1], light_color[2]);
+        shaderProg.setFloat("light.ambient_light", light_color[0], light_color[1], light_color[2]);
+        shaderProg.setFloat("light.diffuse_light", light_color[3], light_color[4], light_color[5]);
+        shaderProg.setFloat("light.specular_light", light_color[6], light_color[7], light_color[8]);
+        shaderProg.setFloat("light.light_position", light_position[0], light_position[1], light_position[2]);
+
         shaderProg.setFloat("camera_position", camera_position.x, camera_position.y, camera_position.z);
         //texture_manager.activeTextures();
         //glActiveTexture(GL_TEXTURE0);
@@ -253,17 +252,19 @@ int main()
         glBindVertexArray(VAO);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
-        for (int i = 0; i < 1; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             glm::mat4 model2 = glm::mat4(1.0f);
             glm::mat4 norm_mat2 = glm::mat4(1.0f);
             model2 = glm::translate(model2, cubePositions[i]);
             model2 = glm::rotate(model2, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
-            model2 = glm::rotate(model2, glm::radians(process_time * 50.0f * 0), glm::vec3(0.5f, 1.0f, 0.0f));
+            model2 = glm::rotate(model2, glm::radians(process_time * 5.0f * i), glm::vec3(0.5f, 1.0f, 0.0f));
             norm_mat2 = glm::transpose(glm::inverse(model2));
 
             shaderProg.setTrans("model", model2);
             shaderProg.setTrans("norm_mat", norm_mat2);
+
+            texture_manager.activeSingleTexture(1, 3);
 
             texture_manager.activeSingleTexture(0, 0);
             glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void*)0);
