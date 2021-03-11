@@ -17,7 +17,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y);
 void processInput(GLFWwindow* window);
 void clearBuffer(GLenum config);
-unsigned int  loadTextureFromPath(Shader shader, unsigned int texture_order, const char* texture_path);
+unsigned int  loadTextureFromPath(Shader shader, unsigned int texture_order, const char* texture_path); // has been replaced by class TextureManager
+
 
 // settings
 const unsigned int SCR_WIDTH = 600;
@@ -87,12 +88,18 @@ int main()
         "opengl_project/Resource/test_specular_texture.jpg"
     };
 
+    float material_ambient = 0.2;
+    float material_shininess = 256.0;
+
     TextureManager texture_manager;
     texture_manager.loadJPGsFromPath(4, texture_path);
+
+    // fragment uniform  (for lighting material)
     shaderProg.useShader();
-    shaderProg.setInt("material.texture0", 0);
-    shaderProg.setInt("material.specular", 1);
-    float material_shininess = 256.0;
+    shaderProg.setInt("material.default_texture", 0);
+    shaderProg.setInt("material.specular_texture", 1);
+    shaderProg.setFloat("material.ambient", material_ambient);
+    shaderProg.setFloat("material.shininess", material_shininess);
     //texture_manager.setShaderForTexture(&shaderProg);
 
     // enable depth test
@@ -228,16 +235,17 @@ int main()
         clearBuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         shaderProg.useShader();
+
+        // vertex uniform
         shaderProg.setTrans("model", model);
         shaderProg.setTrans("norm_mat", norm_mat);
         shaderProg.setTrans("view", view);
         shaderProg.setTrans("projection", projection);
 
+        // fragment uniform
         shaderProg.setFloat("u_time", process_time);
         shaderProg.setFloat("u_mouse", float(mouse_position[0]), float(window_size[1]) - float(mouse_position[1]));
         shaderProg.setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
-
-        shaderProg.setFloat("material.shininess", material_shininess);
 
         shaderProg.setFloat("light.ambient_light", light_color[0], light_color[1], light_color[2]);
         shaderProg.setFloat("light.diffuse_light", light_color[3], light_color[4], light_color[5]);

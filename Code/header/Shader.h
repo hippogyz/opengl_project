@@ -25,7 +25,10 @@ public:
 
 	void setInt(const char* name, int i1);
 
-	void setTrans(const char* name, glm::mat4 trans);
+	void setBool(const char* name, bool b1);
+
+	void setVec3(const char* name, glm::vec3& vec);
+	void setTrans(const char* name, glm::mat4& trans);
 
 
 protected:

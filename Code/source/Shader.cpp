@@ -83,7 +83,17 @@ void Shader::setInt(const char* name, int i1)
 }
 
 
-void Shader::setTrans(const char* name, glm::mat4 trans)
+void Shader::setBool(const char* name, bool b1)
+{
+    setInt(name, (int)b1);
+}
+
+void Shader::setVec3(const char* name, glm::vec3& vec) 
+{
+    setFloat(name, vec.x, vec.y, vec.z);
+}
+
+void Shader::setTrans(const char* name, glm::mat4& trans)
 {
     int location = glGetUniformLocation(prog, name);
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(trans));

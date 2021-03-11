@@ -1,18 +1,14 @@
 #version 330 core
 
 in vec3 frag_position;
-in vec3 normal;
+in vec3 normal_vector;
 in vec2 text_coor;
 
 uniform float u_time;
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
 
-
-float gaussian_mouse(vec2 pos, vec2 mouse, float sigma){
-    vec2 distance = pos - mouse;
-    return exp( - sigma * (distance.x * distance.x + distance.y * distance.y) );
-}
+float gaussian_mouse(vec2 pos, vec2 mouse, float sigma);
 
 void main()
 {
@@ -26,4 +22,10 @@ void main()
     color = mix( color, mouse_color, mouse_gauss);
 
     gl_FragColor = vec4(color, 1.0);
+}
+
+
+float gaussian_mouse(vec2 pos, vec2 mouse, float sigma){
+    vec2 distance = pos - mouse;
+    return exp( - sigma * (distance.x * distance.x + distance.y * distance.y) );
 }
