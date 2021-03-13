@@ -13,12 +13,12 @@ class Light
 {
 public:
 	Light(bool is_active, glm::vec3 diffuse, glm::vec3 specular);
-	virtual void setLight(Shader&shader_prog) = 0;
-	virtual void setLight(Shader& shader_prog, int order) = 0;
+	virtual void setLight(Shader& shader_prog, const char* name) = 0;
 	virtual ~Light() {};
 
-protected:
 	bool is_active;
+
+protected:
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 };
@@ -27,8 +27,7 @@ class DirLight : public Light {
 public:
 	DirLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction);
 
-	virtual void setLight(Shader& shader_prog);
-	virtual void setLight(Shader& shader_prog, int order);
+	virtual void setLight(Shader& shader_prog, const char* name);
 	virtual ~DirLight() {};
 
 protected:
@@ -38,10 +37,9 @@ protected:
 class PointLight : public Light {
 public:
 	PointLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular, 
-		glm::vec3 position, float decay_0 = 1.0, float decay_1 = 0.14, float decay_2 = 0.07);
+		glm::vec3 position, float decay_0 = 1.0, float decay_1 = 0.05, float decay_2 = 0.025);
 
-	virtual void setLight(Shader& shader_prog);
-	virtual void setLight(Shader& shader_prog, int order);
+	virtual void setLight(Shader& shader_prog, const char* name);
 	virtual ~PointLight() {};
 
 protected:
@@ -56,10 +54,9 @@ class SpotLight : public PointLight {
 public:
 	SpotLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular, 
 		glm::vec3 position, glm::vec3 direction,
-		float decay_0 = 1.0, float decay_1 = 0.14, float decay_2 = 0.07, float inner_cone = 0.95, float outer_cone = 0.85);
+		float decay_0 = 1.0, float decay_1 = 0.05, float decay_2 = 0.025, float inner_cone = 0.95, float outer_cone = 0.85);
 
-	virtual void setLight(Shader& shader_prog);
-	virtual void setLight(Shader& shader_prog, int order);
+	virtual void setLight(Shader& shader_prog, const char* name);
 	virtual ~SpotLight() {};
 
 protected:

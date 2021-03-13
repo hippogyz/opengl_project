@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "TextureManager.h"
 #include "Camera.h"
+#include "Light.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -88,7 +89,7 @@ int main()
         "opengl_project/Resource/test_specular_texture.jpg"
     };
 
-    float material_ambient = 0.2;
+    float material_ambient = 0.1;
     float material_shininess = 256.0;
 
     TextureManager texture_manager;
@@ -101,6 +102,38 @@ int main()
     shaderProg.setFloat("material.ambient", material_ambient);
     shaderProg.setFloat("material.shininess", material_shininess);
     //texture_manager.setShaderForTexture(&shaderProg);
+
+
+    // lighting    
+    const int point_light_num = 4;
+    glm::vec3 light_position[point_light_num] = {
+        glm::vec3(5.0,  2.0, 1.0),
+        glm::vec3(-2.0, 3.0, -10.0),
+        glm::vec3(4.0, -9.0, 2.0),
+        glm::vec3(-10.0, 2.0, -3.0)
+    };
+
+    PointLight point_light[point_light_num] = {
+        PointLight(true, glm::vec3(0.7), glm::vec3(1.0), light_position[0]),
+        PointLight(true, glm::vec3(0.7), glm::vec3(1.0), light_position[1]),
+        PointLight(true, glm::vec3(0.7), glm::vec3(1.0), light_position[2]),
+        PointLight(true, glm::vec3(0.7), glm::vec3(1.0), light_position[3])
+    };
+
+    DirLight dir_light = DirLight(true, glm::vec3(0.3), glm::vec3(0.5), glm::vec3(1.0, 1.0, -1.0) );
+    
+    glm::vec3 spot_light_position = glm::vec3(3.0);
+    glm::vec3 spot_light_direction = glm::vec3(-1.0);
+    SpotLight spot_light = SpotLight(true, glm::vec3(0.7), glm::vec3(1.0), spot_light_position, spot_light_direction);
+    
+    // enable light
+    for (int i = 0; i < point_light_num; ++i)
+    {
+        std::string pl_name = std::string("point_light[") + char(i + int('0')) + "]";
+        point_light[i].setLight(shaderProg, pl_name.c_str());
+    }
+    dir_light.setLight(shaderProg, "dir_light");
+    spot_light.setLight(shaderProg, "spot_light");
 
     // enable depth test
     // ------------------
@@ -222,13 +255,6 @@ int main()
         view = camera.getViewMat();
         projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
 
-        // lighting
-        float light_position[3] = { 10.0, 5.0, 5.0};
-        float light_color[] = {
-            0.2, 0.2, 0.2,
-            0.7, 0.7, 0.7,
-            1.0, 1.0, 1.0
-        };
         glm::vec3 camera_position = camera.getPosition();
 
         // render part
@@ -246,11 +272,6 @@ int main()
         shaderProg.setFloat("u_time", process_time);
         shaderProg.setFloat("u_mouse", float(mouse_position[0]), float(window_size[1]) - float(mouse_position[1]));
         shaderProg.setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
-
-        shaderProg.setFloat("light.ambient_light", light_color[0], light_color[1], light_color[2]);
-        shaderProg.setFloat("light.diffuse_light", light_color[3], light_color[4], light_color[5]);
-        shaderProg.setFloat("light.specular_light", light_color[6], light_color[7], light_color[8]);
-        shaderProg.setFloat("light.light_position", light_position[0], light_position[1], light_position[2]);
 
         shaderProg.setFloat("camera_position", camera_position.x, camera_position.y, camera_position.z);
         //texture_manager.activeTextures();
@@ -283,15 +304,8 @@ int main()
         }
 
         // draw light source
-        glm::mat4 ref_model = glm::mat4(1.0f);
-        glm::mat4 ref_norm_mat = glm::mat4(1.0f);
-        ref_model = glm::translate(ref_model, glm::vec3(light_position[0], light_position[1], light_position[2]));
-        ref_model = glm::scale(ref_model, glm::vec3(0.3));
-        ref_norm_mat = glm::transpose(glm::inverse(ref_model));
 
         refShaderProg.useShader();
-        refShaderProg.setTrans("model", ref_model);
-        refShaderProg.setTrans("norm_mat", ref_norm_mat);
         refShaderProg.setTrans("view", view);
         refShaderProg.setTrans("projection", projection);
 
@@ -299,7 +313,56 @@ int main()
         refShaderProg.setFloat("u_mouse", float(mouse_position[0]), float(window_size[1]) - float(mouse_position[1]));
         refShaderProg.setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
 
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+        for (int i = 0; i < point_light_num; ++i)
+        {
+            if (point_light[i].is_active)
+            {
+                glm::mat4 ref_model = glm::mat4(1.0f);
+                glm::mat4 ref_norm_mat = glm::mat4(1.0f);
+                ref_model = glm::translate(ref_model, glm::vec3(light_position[i].x, light_position[i].y, light_position[i].z));
+                ref_model = glm::scale(ref_model, glm::vec3(0.3));
+                ref_norm_mat = glm::transpose(glm::inverse(ref_model));
+
+                refShaderProg.useShader();
+                refShaderProg.setTrans("model", ref_model);
+                refShaderProg.setTrans("norm_mat", ref_norm_mat);
+
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+            }
+        }
+
+        if (spot_light.is_active)
+        {
+            glm::mat4 ref_spot_model = glm::mat4(1.0f);
+            glm::mat4 ref_spot_norm_mat = glm::mat4(1.0f);
+            ref_spot_model = glm::translate(ref_spot_model, glm::vec3(spot_light_position.x, spot_light_position.y, spot_light_position.z));
+            ref_spot_model = glm::scale(ref_spot_model, glm::vec3(0.4));
+            ref_spot_norm_mat = glm::transpose(glm::inverse(ref_spot_model));
+
+            refShaderProg.useShader();
+            refShaderProg.setTrans("model", ref_spot_model);
+            refShaderProg.setTrans("norm_mat", ref_spot_norm_mat);
+
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+
+            for (int i = 0; i < 5; ++i)
+            {
+                glm::mat4 ref_model = glm::mat4(1.0f);
+                glm::mat4 ref_norm_mat = glm::mat4(1.0f);
+                glm::vec3 spot_dir = spot_light_position + glm::normalize(spot_light_direction) * float(0.1f * i + 0.4f);
+                ref_model = glm::translate(ref_model, glm::vec3(spot_dir.x, spot_dir.y, spot_dir.z));
+                ref_model = glm::scale(ref_model, glm::vec3(0.2));
+                ref_norm_mat = glm::transpose(glm::inverse(ref_model));
+
+                refShaderProg.useShader();
+                refShaderProg.setTrans("model", ref_model);
+                refShaderProg.setTrans("norm_mat", ref_norm_mat);
+
+                glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
+            }
+        }
+
+
 
         //glDrawArrays(GL_TRIANGLES, 0, 3);
 
