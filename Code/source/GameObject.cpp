@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Component.h"
 
+#include <iostream>
 #include <algorithm> // std::sort
 
 GameObject::GameObject(bool active) : is_active(active)
@@ -15,6 +16,8 @@ GameObject::~GameObject()
 
 void GameObject::uniform_update(float delta)
 {
+	arrangeComponent();
+
 	if (!is_active) return;
 
 	if (first_update)
@@ -27,8 +30,6 @@ void GameObject::uniform_update(float delta)
 		component->uniform_update(delta);
 	}
 	update(delta);
-
-	arrangeComponent();
 }
 
 void GameObject::start()
@@ -41,72 +42,65 @@ void GameObject::update(float delta)
 
 }
 
-template < typename ComponentName >
-ComponentName& GameObject::getComponent()
-{
-	for (auto&& component : component_list)
-	{
-		if (component.isComponentType(ComponentName::Type))
-		{
-			return *static_cast<ComponentName*> (component.get());
-		}
-	}
-
-	return *std::unique_ptr<ComponentName> (nullptr);
-}
-
-template < typename ComponentName, typename... Args >
-void GameObject::addComponent(Args&&... args)
-{
-	std::unique_ptr<ComponentName> component;
-	component = std::unique_ptr<ComponentName>(
-		new ComponentName(std::forward<Args>(args)...) );
-
-	auto it = add_buffer.begin();
-	while (		it != add_buffer.end() &&
-				component->order > (*it)->order )
-	{
-		++it;
-	}
-
-	add_buffer.insert(it, std::move(component));
-}
-
-template <typename ComponentName>
-void GameObject::removeComponent()
-{
-	int index = 0;
-	for (auto&& component : component_list)
-	{
-		if (component.isComponentType(ComponentName::Type))
-		{
-			remove_buffer.push_back(index);
-		}
-		++index;
-	}
-}
-
 void GameObject::arrangeComponent()
 {
 	std::sort(remove_buffer.begin(), remove_buffer.end());
 	for (auto it = remove_buffer.rbegin(); it != remove_buffer.rend(); ++it)
 	{
-		auto component = component_list.begin();
-		component += *it;
-		(*component).reset();
-		component_list.erase(component);
+		auto it_com = component_list.begin();
+		it_com += *it;
+		(*it_com).reset();
+		component_list.erase(it_com);
 	}
 	remove_buffer.clear();
 
-	auto component = component_list.begin();
+	int index_com = 0;
 	for (auto it = add_buffer.begin(); it != add_buffer.end(); ++it)
 	{
-		while ((*it)->order > (*component)->order && component != component_list.end())
+		auto it_com = component_list.begin() + index_com;
+		while (it_com != component_list.end() && (*it)->order > (*it_com)->order)
 		{
-			++component;
+			++it_com;
+			++index_com;
 		}
 
-		component_list.insert(component, std::move(*it));
-		++component;
+		component_list.insert(it_com, std::move(*it));
+		++index_com;
 	}
+	add_buffer.clear();
+}
+
+void GameObject::test_printComponentName()
+{
+	std::cout << "component list: ";
+	for (auto it = component_list.begin(); it != component_list.end(); ++it)
+	{
+		std::cout<< '('<< (*it)->order <<')' << (*it)->Type << "  ";
+	}
+	std::cout << std::endl;
+}
+
+void GameObject::test_printAddList()
+{
+	std::cout << "add list: " ;
+	for (auto it = add_buffer.begin(); it != add_buffer.end(); ++it)
+	{
+		std::cout << '(' << (*it)->order << ')' << (*it)->Type << "  ";
+	}
+	std::cout << std::endl;
+}
+
+void GameObject::test_printRemoveList()
+{
+	std::cout << "remove list: ";
+	for (auto it = remove_buffer.begin(); it != remove_buffer.end(); ++it)
+	{
+		std::cout << '['<< *it << ']' << component_list[ *it ]->Type << "  ";
+	}
+	std::cout << std::endl;
+}
+
+void GameObject::test_arrange()
+{
+	arrangeComponent();
 }
