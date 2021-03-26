@@ -1,11 +1,9 @@
 #include "Component.h"
 
-const std::size_t Component::Type = std::hash<std::string>() (std::string("Component"));
-
-bool Component::isComponentType(const std::size_t type) const
-{
-	return type == Type;
-}
+// basic definition of Component class
+const std::size_t Component::Type = std::hash<std::string>() (COMPONENT_TO_STRING(Component));
+bool Component::isComponentType(const std::size_t type) const		{	return type == Type;	}
+std::size_t Component::getComponentType() const		{	return Type;	}
 
 
 Component::Component(bool is_active, int order) : is_active(is_active), order(order)

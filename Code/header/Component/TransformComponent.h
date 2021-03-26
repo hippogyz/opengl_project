@@ -3,11 +3,9 @@
 #include "Component.h"
 
 class TransformComponent : public Component {
-public: // type
-	static const std::size_t Type;
-	virtual bool isComponentType(const std::size_t type) const;
+
+	COMPONENT_DECLARATION(TransformComponent)
 
 public:
 	TransformComponent(bool is_active, int order);
-
 };

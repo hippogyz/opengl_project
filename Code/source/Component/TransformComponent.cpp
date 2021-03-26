@@ -1,14 +1,7 @@
 #include "Component/TransformComponent.h"
+#include <iostream>
 
-const std::size_t TransformComponent::Type = std::hash<std::string>() (std::string("TransformComponent"));
-
-bool TransformComponent::isComponentType(std::size_t type) const 
-{
-	if (type == Type)
-		return true;
-	return Component::isComponentType(type);
-}
-
+COMPONENT_DEFINITION( Component, TransformComponent )
 
 TransformComponent::TransformComponent(bool is_active, int order) : Component(is_active, order)
 {
