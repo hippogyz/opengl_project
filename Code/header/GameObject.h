@@ -14,8 +14,6 @@ public: // method
 	virtual ~GameObject();
 
 	void uniform_update(float delta);
-	virtual void start();
-	virtual void update(float delta);
 	
 	template < typename ComponentName > 
 		ComponentName& getComponent();
@@ -28,6 +26,10 @@ public: // method
 		void test_printAddList();
 		void test_printRemoveList();
 		void test_arrange();
+
+protected:
+	virtual void start();
+	virtual void update(float delta);
 
 private: // member
 	bool first_update;
