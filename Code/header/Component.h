@@ -1,24 +1,35 @@
 #pragma once
 #include<string>
 #include <memory>
+#include "GameObject.h"
+
+#define INPUT_HANDLER_ORDER 1
+#define TRANSFORM_ORDER 10
+#define RENDER_ORDER 30
 
 class Component {
 public: // basic declaration of Component class 
 	static const std::size_t Type;
 	virtual bool isComponentType(const std::size_t type) const;
 	virtual std::size_t getComponentType() const;
-
+	
 public: // member
 	int order;
 	bool is_active;
+	GameObject* gameobject;
 
 public: // method
-	Component(bool is_active, int order);
+	Component(GameObject* gameobject, int order);
+	virtual ~Component() {};
 	void uniform_update(float delta);
 	bool remove_call();
+	bool is_removed();
+
+	template < typename ComponentName >
+	ComponentName* getComponent();
 
 protected:
-	virtual void start();
+	virtual void start(); // do not initialize here
 	virtual void update(float delta);
 
 private:
@@ -26,6 +37,12 @@ private:
 	bool removed;
 };
 
+// ------- template method -------//
+template < typename ComponentName >
+ComponentName* Component::getComponent()
+{
+	return gameobject->getComponent<ComponentName>();
+}
 
 // macro for declaring and defining child classes of component
 #define COMPONENT_TO_STRING( x ) #x

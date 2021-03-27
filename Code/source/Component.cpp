@@ -6,8 +6,9 @@ bool Component::isComponentType(const std::size_t type) const		{	return type == 
 std::size_t Component::getComponentType() const		{	return Type;	}
 
 
-Component::Component(bool is_active, int order) : is_active(is_active), order(order)
+Component::Component(GameObject* gameobject, int order) : gameobject(gameobject), order(order)
 {
+	is_active = true;
 	first_update = true;
 	removed = false;
 }
@@ -45,4 +46,9 @@ bool Component::remove_call()
 	}
 
 	return false;
+}
+
+bool Component::is_removed()
+{
+	return removed;
 }

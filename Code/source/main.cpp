@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <memory>
 #include "stb_image.h"
 
 #include "Shader.h"
@@ -12,6 +13,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Game.h"
+#include "GameObject.h"
+#include "Component.h"
+#include "Component/TransformComponent.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -39,6 +45,16 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int main()
 {
+    GameObject gameobject;
+    gameobject.test_gameObject();
+
+    Game game;
+    game.add_object(std::unique_ptr<GameObject>(new GameObject()));
+    game.add_object(std::unique_ptr<GameObject>(new GameObject()));
+    game.add_object(std::unique_ptr<GameObject>(new GameObject()));
+    game.game_update(0.1);
+
+
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();

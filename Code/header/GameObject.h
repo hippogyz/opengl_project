@@ -4,17 +4,24 @@
 #include <memory>
 
 class Component;
+class TransformComponent;
 
 class GameObject {
 public: // member
-	std::vector< std::unique_ptr<Component> > component_list;
+	bool is_alive; // for Game class
+
 	bool is_active;
+	std::vector< std::unique_ptr<Component> > component_list;
+	std::unique_ptr<TransformComponent> transform;
 
 public: // method
-	GameObject(bool active);
+	GameObject(bool active = true);
 	virtual ~GameObject();
 
+	//void process_input(float delta);
 	void uniform_update(float delta);
+	void physics_update(float delta);
+	//void render();
 	
 	template < typename ComponentName > 
 		ComponentName* getComponent();
@@ -23,9 +30,9 @@ public: // method
 	template < typename ComponentName >
 		void removeComponent();
 
+		void test_gameObject();
 		void test_printComponentName();
 		void test_printAddList();
-		void test_printRemoveList();
 		void test_arrange();
 
 protected:
@@ -34,12 +41,13 @@ protected:
 
 private: // member
 	bool first_update;
-	std::vector< unsigned int > remove_buffer;
 	std::vector< std::unique_ptr<Component> > add_buffer;
 	
 private: // method
 	void arrangeComponent();
 };
+
+
 
 
 //   ---------- template method ---------- //
@@ -67,13 +75,11 @@ void GameObject::addComponent(Args&&... args)
 template <typename ComponentName>
 void GameObject::removeComponent()
 {
-	int index = 0;
 	for (auto&& component : component_list)
 	{
-		if (component ->isComponentType(ComponentName::Type) && component ->remove_call() )
+		if (component ->isComponentType(ComponentName::Type))
 		{
-			remove_buffer.push_back(index);
+			component->remove_call();
 		}
-		++index;
 	}
 }

@@ -1,17 +1,33 @@
 #include "GameObject.h"
 #include "Component.h"
+#include "Component/TransformComponent.h"
 
 #include <iostream>
 #include <algorithm> // std::sort
 
 GameObject::GameObject(bool active) : is_active(active)
 {
+	is_alive = true;
 	first_update = false;
+
+	transform = nullptr;
 }
 
 GameObject::~GameObject()
 {
+	transform.reset();
 
+	for (auto&& component : component_list)
+	{
+		component.reset();
+	}
+	component_list.clear();
+
+	for (auto&& component : add_buffer)
+	{
+		component.reset();
+	}
+	add_buffer.clear();
 }
 
 void GameObject::uniform_update(float delta)
@@ -32,6 +48,14 @@ void GameObject::uniform_update(float delta)
 	update(delta);
 }
 
+void GameObject::physics_update(float delta)
+{
+	if ( is_active && transform )
+	{
+		transform->uniform_update(delta);
+	}
+}
+
 void GameObject::start()
 {
 
@@ -49,35 +73,62 @@ const bool static compare_component_order(const std::unique_ptr<Component>& a, c
 
 void GameObject::arrangeComponent()
 {
-	std::sort(remove_buffer.begin(), remove_buffer.end());
-	for (auto it = remove_buffer.rbegin(); it != remove_buffer.rend(); ++it)
+	for (auto it = component_list.begin(); it != component_list.end(); )
 	{
-		auto it_com = component_list.begin();
-		it_com += *it;
-		(*it_com).reset();
-		component_list.erase(it_com);
+		if ((*it)->is_removed())
+		{
+			(*it).reset();
+			it = component_list.erase(it);
+		}
+		else
+		{
+			++it;
+		}
 	}
-	remove_buffer.clear();
 
-	int index_com = 0;
 	std::sort(add_buffer.begin(), add_buffer.end(), compare_component_order);
-	for (auto it = add_buffer.begin(); it != add_buffer.end(); ++it)
+
+	auto it_com = component_list.begin();
+	auto it_add = add_buffer.begin();
+	for ( ; it_add != add_buffer.end(); ++it_add)
 	{
-		auto it_com = component_list.begin() + index_com;
-		while (it_com != component_list.end() && (*it)->order > (*it_com)->order)
+		while (it_com != component_list.end() && (*it_add)->order > (*it_com)->order)
 		{
 			++it_com;
-			++index_com;
 		}
 
-		component_list.insert(it_com, std::move(*it));
-		++index_com;
+		it_com = component_list.insert(it_com, std::move(*it_add));
+		++it_com;
 	}
 	add_buffer.clear();
 }
 
 
 // ----------------- method for test ----------------- //
+void GameObject::test_gameObject()
+{
+	addComponent<TransformComponent>(this);
+	addComponent<Component>(this, 5);
+	addComponent<Component>(this, 15);
+	test_printComponentName();
+	test_printAddList();
+	std::cout << std::endl << "arrange component list" << std::endl;
+	test_arrange();
+	test_printComponentName();
+	test_printAddList();
+	removeComponent<TransformComponent>();
+	std::cout << std::endl << "remove transform" << std::endl;
+	test_arrange();
+	test_printComponentName();
+	test_printAddList();
+	removeComponent<TransformComponent>();
+	removeComponent<Component>();
+	std::cout << std::endl << "remove component" << std::endl;
+	test_arrange();
+	test_printComponentName();
+	test_printAddList();
+}
+
 void GameObject::test_printComponentName()
 {
 	std::cout << "component list: ";
@@ -94,16 +145,6 @@ void GameObject::test_printAddList()
 	for (auto it = add_buffer.begin(); it != add_buffer.end(); ++it)
 	{
 		std::cout << '(' << (*it)->order << ')' << (*it)->getComponentType() << "  ";
-	}
-	std::cout << std::endl;
-}
-
-void GameObject::test_printRemoveList()
-{
-	std::cout << "remove list: ";
-	for (auto it = remove_buffer.begin(); it != remove_buffer.end(); ++it)
-	{
-		std::cout << '['<< *it << ']' << component_list[ *it ]->getComponentType() << "  ";
 	}
 	std::cout << std::endl;
 }
