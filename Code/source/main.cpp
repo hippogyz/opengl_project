@@ -54,7 +54,6 @@ int main()
     game.add_object(std::unique_ptr<GameObject>(new GameObject()));
     game.game_update(0.1);
 
-
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
