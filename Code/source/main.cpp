@@ -444,7 +444,7 @@ void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y)
         first_cursor = false;
     }
 
-    camera.rotateCamera(delta_time, float(cursor_x - cursor_last_x), float(cursor_last_y - cursor_y));
+    camera.rotateCamera(delta_time, float(cursor_last_x - cursor_x ), float(cursor_last_y - cursor_y));
     cursor_last_x = cursor_x;
     cursor_last_y = cursor_y;
 }

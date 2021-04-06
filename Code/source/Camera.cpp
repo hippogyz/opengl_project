@@ -2,7 +2,7 @@
 
 const float VELOCITY = 5.0f;
 const float SIGHT_VELOCITY = 20.0f;
-const float YAW = -90.0f;
+const float YAW = 90.0f;
 const float PITCH = 0.0f;
 const float FOV = 1.0f;
 
@@ -91,7 +91,7 @@ void Camera::updateCameraVector()
 	front = glm::vec3(
 		cos(glm::radians(pitch)) * cos(glm::radians(yaw)),
 		sin(glm::radians(pitch)),
-		cos(glm::radians(pitch)) * sin(glm::radians(yaw))
+		cos(glm::radians(pitch)) * -sin(glm::radians(yaw))
 	);
 	right = glm::normalize(glm::cross(front, up));
 }
