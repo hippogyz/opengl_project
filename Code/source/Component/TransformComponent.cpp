@@ -39,7 +39,7 @@ void TransformComponent::initialize()
 	parent_trans = nullptr;
 	position = glm::vec3(1.0);
 	rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
-	scale = glm::vec3(1.0);
+	scale = 1.0;
 
 	global_mode = false;
 	dirty_mark = false;
@@ -80,7 +80,7 @@ void TransformComponent::set_parent(GameObject* gameobject)
 }
 
 // setting method (local part)
-void TransformComponent::set_local_position(const glm::vec3 local_position) 
+void TransformComponent::set_local_position(const glm::vec3& local_position) 
 {
 	if (local_position != position)
 	{
@@ -133,7 +133,7 @@ void TransformComponent::set_local_rotation(const float pitch, const float yaw, 
 	}
 }
 
-void TransformComponent::set_local_scale(const glm::vec3 local_scale)
+void TransformComponent::set_local_scale(const float local_scale)
 {
 	if (local_scale != scale)
 	{

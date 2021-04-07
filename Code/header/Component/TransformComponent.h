@@ -17,7 +17,7 @@ public:
 	// local
 	glm::vec3 position;
 	glm::quat rotation;
-	glm::vec3 scale;
+	float scale; // should only support uniform scaling
 
 public:
 	TransformComponent(GameObject* gameobject, int order = TRANSFORM_ORDER);
@@ -27,11 +27,11 @@ public:
 
 	void set_parent(GameObject* parent_object);
 	
-	void set_local_position(const glm::vec3 local_position);
+	void set_local_position(const glm::vec3& local_position);
 	void set_local_rotation(const glm::quat& local_rotation);
 	void set_local_rotation(const glm::vec3& axis, const float angle);
 	void set_local_rotation(const float pitch, const float yaw, const float roll);
-	void set_local_scale(const glm::vec3 local_scale);
+	void set_local_scale(const float local_scale);
 	//void local_translate(...);
 	//void local_rotate(...);
 	//void local_zoom(...);
