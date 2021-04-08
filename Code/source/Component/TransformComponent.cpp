@@ -26,7 +26,8 @@ glm::mat4 TransformComponent::get_trans_matrix()
 
 void TransformComponent::update(float delta)
 {
-
+	update_transform();
+	cal_trans_matrix();
 }
 
 void TransformComponent::start()
@@ -37,46 +38,77 @@ void TransformComponent::start()
 void TransformComponent::initialize()
 {
 	parent_trans = nullptr;
-	position = glm::vec3(1.0);
+	position = glm::vec3(0.0);
 	rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
 	scale = 1.0;
 
 	global_mode = false;
 	dirty_mark = false;
+
+	g_position = glm::vec3(0.0);
+	g_rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
+	g_scale = 1.0;
 	trans_matrix = glm::mat4(1.0);
-	local_trans_matrix = glm::mat4(1.0);
 }
 
-glm::mat4 TransformComponent::cal_trans_matrix()
+void TransformComponent::update_transform()
 {
+	// make sure that parent has been updated
+	if (parent_trans != nullptr)
+	{
+		parent_trans->update_transform();
+	}
+
+	// update current transform
+	// global
 	if (global_mode)
 	{
 		global_mode = false;
 		dirty_mark = false;
-		return trans_matrix;
+		// update global state (nothing needs to do here, it has been finished in other method)
+		// cal local state (need parent state)
+		global_to_local();
+		return;
 	}
-
-	// global_mode == false   now
-	// update local trans matrix if dirty mark is true
-	if (dirty_mark)
+	// local
+	else	if (dirty_mark)
 	{
-		//local_trans_matrix = XXXXX; scale - rotation - translate
-		//////////////////////////////
+		dirty_mark = false;
+		// update local state (nothing needs to do here, it has been finished in other method)
+		// cal global state (need parent state)
+		local_to_global();
+		return;
 	}
+}
 
-	// check parent trans matrix
-	if (parent_trans != nullptr)
-	{
-		trans_matrix = parent_trans->cal_trans_matrix() * local_trans_matrix;
-	}
-
-	dirty_mark = false;
-	return trans_matrix;
+void TransformComponent::cal_trans_matrix()
+{
+	// use global state
+	trans_matrix = glm::mat4(1.0);
+	trans_matrix = glm::translate(trans_matrix, g_position);
+	trans_matrix = trans_matrix * glm::mat4_cast(g_rotation);
+	trans_matrix = glm::scale(trans_matrix, glm::vec3(g_scale));
 }
 
 void TransformComponent::set_parent(GameObject* gameobject)
 {
+	// update current transform to load previous changes
+	update_transform();
+	// set new parent and update parent's transform
 	parent_trans = gameobject->transform.get();
+	parent_trans->update_transform();
+	// cal new local state
+	global_to_local();
+}
+
+void TransformComponent::local_to_global()
+{
+	////////////////////////////////
+}
+
+void TransformComponent::global_to_local()
+{
+	////////////////////////////////
 }
 
 // setting method (local part)
@@ -141,3 +173,5 @@ void TransformComponent::set_local_scale(const float local_scale)
 		scale = local_scale;
 	}
 }
+
+// ATTENTION: global mode will cancel all local manipulations

@@ -17,7 +17,7 @@ public:
 	// local
 	glm::vec3 position;
 	glm::quat rotation;
-	float scale; // should only support uniform scaling
+	float scale; // only support uniform scaling
 
 public:
 	TransformComponent(GameObject* gameobject, int order = TRANSFORM_ORDER);
@@ -35,11 +35,8 @@ public:
 	//void local_translate(...);
 	//void local_rotate(...);
 	//void local_zoom(...);
-	/*
-	void set_global_position(...);
-	void set_global_rotation(...);
-	void set_global_scale(...);
-	*/
+
+	//void set_global_position_and_rotation(...);
 
 protected:
 	virtual void update(float delta);
@@ -48,13 +45,22 @@ protected:
 private:
 	bool global_mode;
 	bool dirty_mark;
-	glm::mat4 trans_matrix; 
-	glm::mat4 local_trans_matrix;
 
-	static const float scale_min;
-	static const float scale_max;
+	glm::vec3 g_position;
+	glm::quat g_rotation;
+	float g_scale;
+	glm::mat4 trans_matrix;
 
 private:
 	void initialize();
-	glm::mat4 cal_trans_matrix();
+
+	void update_transform();
+	void cal_trans_matrix();
+
+	void local_to_global();
+	void global_to_local();
+
+private:
+	static const float scale_min;
+	static const float scale_max;
 };
