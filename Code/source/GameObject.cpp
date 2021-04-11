@@ -10,7 +10,7 @@ GameObject::GameObject(bool active) : is_active(active)
 	is_alive = true;
 	first_update = false;
 
-	transform = nullptr;
+	transform = std::unique_ptr<TransformComponent>( new TransformComponent(this) );
 }
 
 GameObject::~GameObject()

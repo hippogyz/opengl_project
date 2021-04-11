@@ -32,11 +32,15 @@ public:
 	void set_local_rotation(const glm::vec3& axis, const float angle);
 	void set_local_rotation(const float pitch, const float yaw, const float roll);
 	void set_local_scale(const float local_scale);
-	//void local_translate(...);
-	//void local_rotate(...);
-	//void local_zoom(...);
 
-	//void set_global_position_and_rotation(...);
+	void local_translate(const glm::vec3& trans);
+	void local_rotate(const glm::quat & rotate);
+	void local_rotate(const glm::vec3& axis, const float angle);
+	void local_zoom(const float zoom);
+
+	void set_global_position_and_rotation(const glm::vec3& global_position, const glm::quat& global_rotation);
+	void set_global_position_and_rotation(const glm::vec3& global_position, const glm::vec3& axis, const float angle);
+	void set_global_position_and_rotation(const glm::vec3 global_position, const float pitch, const float yaw, const float roll);
 
 protected:
 	virtual void update(float delta);

@@ -10,15 +10,8 @@ void Game::game_update(float delta)
 {
 	// process input
 
-	for (auto&& object : object_list)
-	{
-		if( object->is_alive )
-		{
-			object->uniform_update(delta);
-		}
-	}
-
-	// update physics
+	uniform_update(delta);
+	physics_update(delta);
 	// render
 
 	arrange_object_list();
@@ -58,7 +51,7 @@ void Game::physics_update(float delta)
 	{
 		if (object->is_alive)
 		{
-			// object -> physics_update(delta);
+			object -> physics_update(delta);
 		}
 	}
 }
