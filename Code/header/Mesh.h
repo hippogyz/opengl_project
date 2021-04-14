@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -15,7 +13,7 @@ struct Vertex {
 	glm::vec3 Bitangent;
 };
 
-enum Texture_Type { DIFFUSE, SPECULAR, NORMAL, HEIGHT };
+enum Texture_Type { DIFFUSE_TEXT, SPECULAR_TEXT, NORMAL_TEXT, HEIGHT_TEXT};
 
 struct Texture {
 	unsigned int id;
