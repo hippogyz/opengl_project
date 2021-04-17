@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -31,6 +32,7 @@ public:
 	unsigned int VAO;
 
 	Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, std::vector<Texture>textures);
+	virtual ~Mesh();
 
 	void Draw(Shader& shader);
 

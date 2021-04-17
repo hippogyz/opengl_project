@@ -13,6 +13,13 @@ Mesh::Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, 
 	initialize_mesh();
 }
 
+Mesh::~Mesh()
+{
+    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &VBO);
+    glad_glDeleteVertexArrays(1, &VAO);
+}
+
 void Mesh::initialize_mesh()
 {
     glGenVertexArrays(1, &VAO);
@@ -60,13 +67,17 @@ void Mesh::Draw(Shader& shader)
             case HEIGHT_TEXT:
                 shader.setInt("material.height_texture", textureOrder);
                 break;
+            default:
+                printf(" --- \"Mesh.cpp\" Draw: texture%d's texture_type unmatched --- \n", texture.id);
         }
+
         glActiveTexture(GL_TEXTURE0 + textureOrder);
         glBindTexture(GL_TEXTURE_2D, texture.id);
 
         ++textureOrder;
     }
 
+    // draw call
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
 

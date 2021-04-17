@@ -1,10 +1,21 @@
 #include "Model.h"
 
 #include <iostream>
+#include "stb_image.h"
+
+static unsigned int texture_from_file(const char* file, std::string dictionary);
 
 Model::Model(const std::string path)
 {
 	load_mesh(path);
+}
+
+Model::~Model()
+{
+	for (auto&& texture : loaded_textures)
+	{
+		glDeleteTextures(1, &(texture.id));
+	}
 }
 
 void Model::Draw(Shader& shader)
@@ -28,6 +39,8 @@ void Model::load_mesh(const std::string path)
 		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 		return;
 	}
+
+	dictionary = path.substr(0, path.find_last_of('/'));
 
 	process_node(scene->mRootNode, scene);
 }
@@ -99,12 +112,12 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 	// textures part
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-	loadMaterialTextures(textures, material);
+	textures = loadMaterialTextures(material);
 
 	return Mesh(vertices, indices, textures);
 }
 
-void Model::loadMaterialTextures(std::vector<Texture>& textures, aiMaterial* material)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material)
 {
 	const static aiTextureType ai_types[] = {
 		aiTextureType_DIFFUSE,
@@ -120,19 +133,88 @@ void Model::loadMaterialTextures(std::vector<Texture>& textures, aiMaterial* mat
 		HEIGHT_TEXT
 	};
 
+	std::vector<Texture> textures;
+
 	for (int i = 0; i < sizeof(ai_types); ++i)
 	{
 		if (material->GetTextureCount(ai_types[i]))
 		{
-			Texture texture = ////////////////////////
+			aiString temp_str;
+			material->GetTexture(ai_types[i], 0, &temp_str);
+			std::size_t temp_hash = std::hash<std::string>() (temp_str.C_Str());
+			bool is_loaded = false;
+
+			for (auto&& texture : loaded_textures)
+			{
+				if (texture.id == temp_hash)
+				{
+					textures.push_back(texture);
+					is_loaded = true;
+					break;
+				}
+			}
+
+			if (!is_loaded)
+			{
+				Texture temp_text;
+				temp_text.id = texture_from_file( temp_str.C_Str(), dictionary );
+				temp_text.path_hash = std::hash<std::string>() (temp_str.C_Str());
+				temp_text.type = text_types[i];
+				loaded_textures.push_back(temp_text);
+				textures.push_back(temp_text);
+			}
 		}
-
-
 	}
 
+	return textures;
 }
 
-static unsigned int load_texture_from()
+static unsigned int texture_from_file(const char* file, std::string dictionary)
 {
+	std::string filename = dictionary + '/' + file;
+	unsigned int id;
 
+	int width, height, nrComponents;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+
+	if (data && strlen((char*)(data)) < 4 * 65536)
+	{
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+		else
+		{
+			printf(" --- \"Model.cpp\" texture_from_file: nrComponents error (not RED or RGB or RGBA)--- \n");
+			format = GL_RED;
+		}
+
+		glGenTextures(1, &id);
+		glBindTexture(GL_TEXTURE_2D, id);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else if (!data)
+	{
+		printf(" --- \"Model.cpp\" texture_from_file: failed to load texture at path: %s--- \n", filename.c_str());
+		id = 0;
+	}
+	else
+	{
+		printf(" --- \"Model.cpp\" texture_from_file: loaded texture at path %s--- is oversized with %d bytes \n",
+			filename.c_str(), int(strlen((char*)(data))) );
+		id = 0;
+	}
+	stbi_image_free(data);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return id;
 }
