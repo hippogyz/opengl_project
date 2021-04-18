@@ -56,7 +56,7 @@ void Game::physics_update(float delta)
 	}
 }
 
-void Game::render()
+void Game::render(float delta)
 {
 	// call openGL
 }

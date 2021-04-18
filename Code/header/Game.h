@@ -18,6 +18,6 @@ private:
 	void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);
-	void render();
+	void render(float delta);
 	void arrange_object_list();
 };
