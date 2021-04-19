@@ -1,16 +1,22 @@
 #include "RenderManager.h"
 
 #include <iostream>
+#include "Game.h"
 
-const unsigned int SCR_WIDTH = 600;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int RenderManager::SCR_WIDTH = 600;
+const unsigned int RenderManager::SCR_HEIGHT = 600;
 
 RenderManager::RenderManager()
 {
-	initialize();
+	initializeOpenGL();
 }
 
-void RenderManager::initialize()
+RenderManager::~RenderManager()
+{
+    glfwTerminate();
+}
+
+void RenderManager::initializeOpenGL()
 {    // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -45,4 +51,51 @@ void RenderManager::initialize()
     // enable depth test
     // ------------------
     glEnable(GL_DEPTH_TEST);
+}
+
+void RenderManager::BeforeRender()
+{
+    clearBuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    // update camera
+
+}
+
+void RenderManager::AfterRender()
+{
+    // nothing to do now
+}
+
+
+
+
+void RenderManager::clearBuffer(GLenum config)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(config);
+}
+
+void RenderManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    // make sure the viewport matches the new window dimensions; note that width and 
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
+}
+
+void RenderManager::cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y)
+{
+ //   Game::access().input_controller.XXXXX
+/*
+    if (first_cursor)
+    {
+        cursor_last_x = cursor_x;
+        cursor_last_y = cursor_y;
+        first_cursor = false;
+    }
+
+    camera.rotateCamera(delta_time, float(cursor_last_x - cursor_x), float(cursor_last_y - cursor_y));
+    cursor_last_x = cursor_x;
+    cursor_last_y = cursor_y;
+    */
 }

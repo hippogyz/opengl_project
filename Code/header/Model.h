@@ -11,8 +11,9 @@
 
 class Model {
 public:
-	Model(const std::string path);
+	std::size_t model_hash;
 
+	Model(const std::string path);
 	virtual ~Model();
 
 	void Draw(Shader& shader);

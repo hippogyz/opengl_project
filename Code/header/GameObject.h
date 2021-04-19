@@ -11,8 +11,8 @@ public: // member
 	bool is_alive; // for Game class
 
 	bool is_active;
-	std::vector< std::unique_ptr<Component> > component_list;
-	std::unique_ptr<TransformComponent> transform;
+	std::vector< std::shared_ptr<Component> > component_list;
+	std::shared_ptr<TransformComponent> transform;
 
 public: // method
 	GameObject(bool active = true);
@@ -24,7 +24,7 @@ public: // method
 	//void render();
 	
 	template < typename ComponentName > 
-		ComponentName* getComponent();
+		std::weak_ptr<ComponentName> getComponent();
 	template < typename ComponentName, typename... Args >
 		void addComponent(Args&&... args);
 	template < typename ComponentName >
@@ -41,7 +41,7 @@ protected:
 
 private: // member
 	bool first_update;
-	std::vector< std::unique_ptr<Component> > add_buffer;
+	std::vector< std::shared_ptr<Component> > add_buffer;
 	
 private: // method
 	void arrangeComponent();
@@ -52,24 +52,26 @@ private: // method
 
 //   ---------- template method ---------- //
 template < typename ComponentName >
-ComponentName* GameObject::getComponent()
+std::weak_ptr<ComponentName> GameObject::getComponent()
 {
+	std::weak_ptr<ComponentName> wp;
+
 	for (auto&& component : component_list)
 	{
 		if (component->isComponentType(ComponentName::Type))
 		{
-			return static_cast<ComponentName*> (component.get());
+			wp = component;
 		}
 	}
 
-	return nullptr;
+	return wp;
 }
 
 template < typename ComponentName, typename... Args >
 void GameObject::addComponent(Args&&... args)
 {
-	auto component = std::unique_ptr<ComponentName>(new ComponentName(std::forward<Args>(args)...));
-	add_buffer.push_back(std::move(component));
+	auto component = std::make_shared<ComponentName>(std::forward<Args>(args)...);
+	add_buffer.push_back( component );
 }
 
 template <typename ComponentName>

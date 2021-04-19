@@ -19,6 +19,11 @@ TransformComponent::TransformComponent(GameObject* gameobject, int order) : Comp
 	initialize();
 }
 
+TransformComponent::~TransformComponent()
+{
+
+}
+
 glm::mat4 TransformComponent::get_trans_matrix()
 {
 	return trans_matrix;
@@ -37,13 +42,14 @@ void TransformComponent::start()
 
 void TransformComponent::initialize()
 {
-	parent_trans = nullptr;
+	//parent_trans = nullptr;
 	position = glm::vec3(0.0);
 	rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
 	scale = 1.0;
 
 	global_mode = false;
 	dirty_mark = false;
+	is_root = true;
 
 	g_position = glm::vec3(0.0);
 	g_rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
@@ -54,9 +60,10 @@ void TransformComponent::initialize()
 void TransformComponent::update_transform()
 {
 	// make sure that parent has been updated
-	if (parent_trans != nullptr)
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
+	if (parent_temp != nullptr)
 	{
-		parent_trans->update_transform();
+		parent_temp->update_transform();
 	}
 
 	// update current transform
@@ -95,8 +102,9 @@ void TransformComponent::set_parent(GameObject* gameobject)
 	// update current transform to load previous changes
 	update_transform();
 	// set new parent and update parent's transform
-	parent_trans = gameobject->transform.get();
-	parent_trans->update_transform();
+	gameobject->transform->update_transform();
+	parent_trans = gameobject->transform;
+	is_root = false;
 	// cal new local state
 	global_to_local();
 	dirty_mark = false;
@@ -104,31 +112,40 @@ void TransformComponent::set_parent(GameObject* gameobject)
 
 void TransformComponent::local_to_global()
 {
-	if (parent_trans != nullptr)
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
+	if (parent_temp != nullptr)
 	{
-		glm::vec3 p_position = parent_trans->g_position;
-		glm::quat p_rotation = parent_trans->g_rotation;
-		float p_scale = parent_trans->g_scale;
+		glm::vec3 p_position = parent_temp->g_position;
+		glm::quat p_rotation = parent_temp->g_rotation;
+		float p_scale = parent_temp->g_scale;
 
 		g_position = p_position + p_scale * glm::mat3_cast(p_rotation) * position;
 		g_rotation = p_rotation * rotation;
 		g_scale = p_scale * scale;
 	}
-	else
+	else if(is_root) // check whether parent is deleted in this frame
 	{
 		g_position = position;
 		g_rotation = rotation;
 		g_scale = scale;
 	}
+	else
+	{
+		position = g_position;
+		rotation = g_rotation;
+		scale = g_scale;
+		is_root = true;
+	}
 }
 
 void TransformComponent::global_to_local()
 {
-	if (parent_trans != nullptr)
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
+	if (parent_temp != nullptr)
 	{
-		glm::vec3 p_position = parent_trans->g_position;
-		glm::quat p_rotation = parent_trans->g_rotation;
-		float p_scale = parent_trans->g_scale;
+		glm::vec3 p_position = parent_temp->g_position;
+		glm::quat p_rotation = parent_temp->g_rotation;
+		float p_scale = parent_temp->g_scale;
 
 		position = glm::mat3_cast( glm::inverse(p_rotation) ) * (g_position - p_position) / p_scale;
 		rotation = glm::inverse(p_rotation) * g_rotation;

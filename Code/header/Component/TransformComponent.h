@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <vector>
 
 // right hand, y-axis denotes up-direction, x-axis denotes original right-direction
 
@@ -13,7 +14,7 @@ class TransformComponent : public Component {
 	COMPONENT_DECLARATION(TransformComponent)
 
 public:
-	TransformComponent* parent_trans;
+	std::weak_ptr<TransformComponent> parent_trans;
 	// local
 	glm::vec3 position;
 	glm::quat rotation;
@@ -21,7 +22,7 @@ public:
 
 public:
 	TransformComponent(GameObject* gameobject, int order = TRANSFORM_ORDER);
-	virtual ~TransformComponent() {};
+	virtual ~TransformComponent();
 
 	glm::mat4 get_trans_matrix();
 
@@ -49,6 +50,7 @@ protected:
 private:
 	bool global_mode;
 	bool dirty_mark;
+	bool is_root;
 
 	glm::vec3 g_position;
 	glm::quat g_rotation;

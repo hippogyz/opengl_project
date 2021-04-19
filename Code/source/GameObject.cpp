@@ -10,24 +10,12 @@ GameObject::GameObject(bool active) : is_active(active)
 	is_alive = true;
 	first_update = false;
 
-	transform = std::unique_ptr<TransformComponent>( new TransformComponent(this) );
+	transform = std::make_shared<TransformComponent>(this);
 }
 
 GameObject::~GameObject()
 {
-	transform.reset();
 
-	for (auto&& component : component_list)
-	{
-		component.reset();
-	}
-	component_list.clear();
-
-	for (auto&& component : add_buffer)
-	{
-		component.reset();
-	}
-	add_buffer.clear();
 }
 
 void GameObject::uniform_update(float delta)
@@ -66,7 +54,7 @@ void GameObject::update(float delta)
 
 }
 
-const bool static compare_component_order(const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
+const bool static compare_component_order(const std::shared_ptr<Component>& a, const std::shared_ptr<Component>& b)
 {
 	return a->order < b->order;
 }
@@ -77,7 +65,6 @@ void GameObject::arrangeComponent()
 	{
 		if ((*it)->is_removed())
 		{
-			(*it).reset();
 			it = component_list.erase(it);
 		}
 		else
@@ -97,7 +84,7 @@ void GameObject::arrangeComponent()
 			++it_com;
 		}
 
-		it_com = component_list.insert(it_com, std::move(*it_add));
+		it_com = component_list.insert(it_com, *it_add);
 		++it_com;
 	}
 	add_buffer.clear();

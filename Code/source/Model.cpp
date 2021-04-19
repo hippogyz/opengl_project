@@ -7,6 +7,8 @@ static unsigned int texture_from_file(const char* file, std::string dictionary);
 
 Model::Model(const std::string path)
 {
+	model_hash = std::hash<std::string>()(path);
+
 	load_mesh(path);
 }
 

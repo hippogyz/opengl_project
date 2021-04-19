@@ -16,7 +16,7 @@ public: // basic declaration of Component class
 public: // member
 	int order;
 	bool is_active;
-	GameObject* gameobject;
+	GameObject* gameobject; // component is uniquely managered by gameobject, thus it might be safe to use trival pointer here
 
 public: // method
 	Component(GameObject* gameobject, int order);
@@ -26,7 +26,7 @@ public: // method
 	bool is_removed();
 
 	template < typename ComponentName >
-	ComponentName* getComponent();
+	std::weak_ptr<ComponentName> getComponent();
 
 protected:
 	virtual void start(); // do not initialize here
@@ -39,7 +39,7 @@ private:
 
 // ------- template method -------//
 template < typename ComponentName >
-ComponentName* Component::getComponent()
+std::weak_ptr<ComponentName> Component::getComponent()
 {
 	return gameobject->getComponent<ComponentName>();
 }

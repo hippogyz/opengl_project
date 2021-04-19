@@ -17,16 +17,16 @@ class Camera;
 
 class RenderManager {
 public:
-	std::vector< std::unique_ptr<Shader> > shaders;
-	std::vector< std::unique_ptr<Model> > models;
-	Camera* camera;
+	std::vector< std::shared_ptr<Shader> > shaders;
+	std::vector< std::shared_ptr<Model> > models;
+	Camera* camera; // camera component -------------------------------------should use weak ptr
 
 public:
 	RenderManager();
-	~RenderMananger();
+	~RenderManager();
 
 	void BeforeRender(); // update camera for shaders
-	void AfterRender(); // clearBuffer and ....
+	void AfterRender(); 
 
 private:
 	GLFWwindow* window;
@@ -41,7 +41,7 @@ private:
 	static const unsigned int SCR_HEIGHT;
 
 private:
-	void initialize();
+	void initializeOpenGL();
 
 	void clearBuffer(GLenum config);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);// link to input_controller

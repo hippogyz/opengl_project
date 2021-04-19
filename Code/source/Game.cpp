@@ -1,9 +1,26 @@
 #include "Game.h"
 #include "GameObject.h"
+#include "RenderManager.h"
+
+Game& Game::access()
+{
+	static Game game;
+	return game;
+}
+
+Game::Game()
+{
+	initialize();
+}
+
+Game::~Game()
+{
+
+}
 
 void Game::initialize()
 {
-
+	render_manager = std::make_shared<RenderManager>();
 }
 
 void Game::game_update(float delta)
@@ -15,11 +32,6 @@ void Game::game_update(float delta)
 	// render
 
 	arrange_object_list();
-}
-
-void Game::add_object(std::unique_ptr<GameObject>&& object)
-{
-	add_buffer.emplace_back(std::move(object));
 }
 
 
@@ -59,6 +71,15 @@ void Game::physics_update(float delta)
 void Game::render(float delta)
 {
 	// call openGL
+	render_manager->BeforeRender();
+	
+	for (auto&& object : object_list)
+	{
+		// if(object -> render)
+		//		draw....
+	}
+
+	render_manager->AfterRender();
 }
 
 void Game::arrange_object_list()
@@ -67,7 +88,6 @@ void Game::arrange_object_list()
 	{
 		if (!(*it)->is_alive) 
 		{
-			(*it).reset();
 			it = object_list.erase(it); 
 		}
 		else 
@@ -78,7 +98,7 @@ void Game::arrange_object_list()
 
 	for (auto it = add_buffer.begin(); it != add_buffer.end(); ++it)
 	{
-		object_list.emplace_back(std::move(*it));
+		object_list.push_back(*it);
 	}
 	add_buffer.clear();
 }
