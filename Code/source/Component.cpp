@@ -26,6 +26,11 @@ void Component::uniform_update(float delta)
 	update(delta);
 }
 
+void Component::rename(std::size_t name)
+{
+
+}
+
 void Component::start()
 {
 
@@ -51,4 +56,9 @@ bool Component::remove_call()
 bool Component::is_removed()
 {
 	return removed;
+}
+
+std::size_t Component::get_object_hash()
+{
+	return gameobject->object_hash;
 }

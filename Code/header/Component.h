@@ -24,9 +24,12 @@ public: // method
 	void uniform_update(float delta);
 	bool remove_call();
 	bool is_removed();
+	std::size_t get_object_hash();
 
 	template < typename ComponentName >
 	std::weak_ptr<ComponentName> getComponent();
+
+	virtual void rename(std::size_t name);
 
 protected:
 	virtual void start(); // do not initialize here

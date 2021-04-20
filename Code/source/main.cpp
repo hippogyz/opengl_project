@@ -45,8 +45,19 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int main()
 {
-    GameObject gameobject;
-    gameobject.test_gameObject();
+    GameObject obj1("123");
+    std::cout << "object1: " << obj1.transform.get() << std::endl;
+    GameObject obj2("345");
+    std::cout << "object2: " << obj2.transform.get() << std::endl;
+
+    {
+        GameObject obj3("567");
+        std::cout << "object3: " << obj3.transform.get() << std::endl;
+        obj2.transform->set_parent(&obj3);
+        obj3.transform->set_parent(&obj1);
+    }
+
+
 
     // glfw: initialize and configure
     // ------------------------------

@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <vector>
+#include <unordered_map>
 
 // right hand, y-axis denotes up-direction, x-axis denotes original right-direction
 
@@ -15,6 +16,8 @@ class TransformComponent : public Component {
 
 public:
 	std::weak_ptr<TransformComponent> parent_trans;
+	std::unordered_map < std::size_t, std::weak_ptr<TransformComponent>  > chilldren_trans;
+
 	// local
 	glm::vec3 position;
 	glm::quat rotation;
@@ -26,6 +29,7 @@ public:
 
 	glm::mat4 get_trans_matrix();
 
+	virtual void rename(std::size_t name);
 	void set_parent(GameObject* parent_object);
 	
 	void set_local_position(const glm::vec3& local_position);
@@ -50,7 +54,6 @@ protected:
 private:
 	bool global_mode;
 	bool dirty_mark;
-	bool is_root;
 
 	glm::vec3 g_position;
 	glm::quat g_rotation;

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 class Component;
 class TransformComponent;
@@ -9,19 +10,22 @@ class TransformComponent;
 class GameObject {
 public: // member
 	bool is_alive; // for Game class
+	std::size_t object_hash;
 
 	bool is_active;
 	std::vector< std::shared_ptr<Component> > component_list;
 	std::shared_ptr<TransformComponent> transform;
 
 public: // method
-	GameObject(bool active = true);
+	GameObject(std::string name, bool active = true);
 	virtual ~GameObject();
 
 	//void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);
 	//void render();
+
+	void rename(std::string name);
 	
 	template < typename ComponentName > 
 		std::weak_ptr<ComponentName> getComponent();

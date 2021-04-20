@@ -5,8 +5,11 @@
 #include <iostream>
 #include <algorithm> // std::sort
 
-GameObject::GameObject(bool active) : is_active(active)
+GameObject::GameObject(std::string name, bool active) 
 {
+	is_active = active;
+	object_hash = std::hash<std::string>() (name);
+
 	is_alive = true;
 	first_update = false;
 
@@ -42,6 +45,21 @@ void GameObject::physics_update(float delta)
 	{
 		transform->uniform_update(delta);
 	}
+}
+
+void GameObject::rename(std::string name)
+{
+	std::size_t new_name = std::hash<std::string>() (name);
+
+	for (auto&& component : component_list)
+	{
+		component->rename(new_name);
+	}
+
+	transform->rename(new_name);
+
+	// the hash key should be updated last
+	object_hash = new_name;
 }
 
 void GameObject::start()

@@ -21,7 +21,20 @@ TransformComponent::TransformComponent(GameObject* gameobject, int order) : Comp
 
 TransformComponent::~TransformComponent()
 {
+	GameObject* parent_object = nullptr;
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
 
+	if (parent_temp != nullptr)
+	{
+		parent_temp->chilldren_trans.erase(get_object_hash());
+		parent_object = parent_temp->gameobject;
+	}
+
+	for (auto it = chilldren_trans.begin(); it != chilldren_trans.end(); ++it)
+	{
+		std::shared_ptr<TransformComponent> child = it->second.lock();
+		child->set_parent(parent_object);
+	}
 }
 
 glm::mat4 TransformComponent::get_trans_matrix()
@@ -49,7 +62,6 @@ void TransformComponent::initialize()
 
 	global_mode = false;
 	dirty_mark = false;
-	is_root = true;
 
 	g_position = glm::vec3(0.0);
 	g_rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
@@ -97,18 +109,68 @@ void TransformComponent::cal_trans_matrix()
 	trans_matrix = glm::scale(trans_matrix, glm::vec3( clamp(g_scale, scale_min, scale_max) )); // range scale
 }
 
+void TransformComponent::rename(std::size_t name) // called by gameobject, don't call it yourself
+{
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
+	if (parent_temp != nullptr)
+	{
+		std::size_t pre_name = get_object_hash();
+		parent_temp->chilldren_trans.erase(pre_name);
+		parent_temp->chilldren_trans.insert({ name, this->gameobject->transform });
+	}
+}
+
 void TransformComponent::set_parent(GameObject* gameobject)
 {
+	// check whether the new parent is a child
+	if (gameobject != nullptr)
+	{
+		std::weak_ptr<TransformComponent> check_trans = gameobject->transform;
+		while (check_trans.lock() != nullptr)
+		{
+			if (check_trans.lock().get() == this)
+				return;
+
+			check_trans = check_trans.lock()->parent_trans;
+		}
+	}
 	// update current transform to load previous changes
 	update_transform();
+	// remove it from previous parent
+	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
+	if (parent_temp != nullptr)
+	{
+		parent_temp->chilldren_trans.erase(get_object_hash());
+	}
+	parent_trans.reset();
 	// set new parent and update parent's transform
-	gameobject->transform->update_transform();
-	parent_trans = gameobject->transform;
-	is_root = false;
+	if (gameobject != nullptr)
+	{
+		gameobject->transform->update_transform();
+		auto parents_children_list = &(gameobject->transform->chilldren_trans);
+		// check name is not repeated
+		int i = 0;
+		std::string new_name;
+		std::size_t object_hash = get_object_hash();
+		while (parents_children_list->find(object_hash) != parents_children_list->end())
+		{
+			++i;
+			new_name = "object" + std::to_string(i);
+			object_hash = std::hash<std::string>() (new_name);
+		}
+		this->gameobject->rename(new_name);
+		// insert into new parent
+		parents_children_list->insert({ get_object_hash(),this->gameobject->transform });
+		parent_trans = gameobject->transform;
+	}
 	// cal new local state
 	global_to_local();
 	dirty_mark = false;
+
+	std::cout << "current: " << this << ", ";
+	std::cout << "parent: " << parent_trans.lock().get() << std::endl;
 }
+
 
 void TransformComponent::local_to_global()
 {
@@ -123,18 +185,11 @@ void TransformComponent::local_to_global()
 		g_rotation = p_rotation * rotation;
 		g_scale = p_scale * scale;
 	}
-	else if(is_root) // check whether parent is deleted in this frame
+	else
 	{
 		g_position = position;
 		g_rotation = rotation;
 		g_scale = scale;
-	}
-	else
-	{
-		position = g_position;
-		rotation = g_rotation;
-		scale = g_scale;
-		is_root = true;
 	}
 }
 
