@@ -26,7 +26,6 @@ TransformComponent::~TransformComponent()
 
 	if (parent_temp != nullptr)
 	{
-		parent_temp->chilldren_trans.erase(get_object_hash());
 		parent_object = parent_temp->gameobject;
 	}
 
@@ -34,6 +33,11 @@ TransformComponent::~TransformComponent()
 	{
 		std::shared_ptr<TransformComponent> child = it->second.lock();
 		child->set_parent(parent_object);
+	}
+
+	if (parent_temp != nullptr)
+	{
+		parent_temp->chilldren_trans.erase(get_object_hash());
 	}
 }
 
