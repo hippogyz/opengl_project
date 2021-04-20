@@ -3,6 +3,7 @@
 Shader::Shader()
 {
 	prog = glCreateProgram();
+    shader_hash = 0;
 
 	if (!prog)
 	{
@@ -44,6 +45,8 @@ void Shader::initializeShaderVF(const char* vs_path, const char* fs_path)
 	shaderAttachFromFile(GL_VERTEX_SHADER, vs_path);
 	shaderAttachFromFile(GL_FRAGMENT_SHADER,  fs_path);
 	linkShaderProgram();
+
+    shader_hash = std::hash< std::string >() (std::string(vs_path) + std::string(fs_path));
 }
 
 void Shader::useShader() 

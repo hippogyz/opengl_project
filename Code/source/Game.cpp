@@ -71,15 +71,16 @@ void Game::physics_update(float delta)
 void Game::render(float delta)
 {
 	// call openGL
-	render_manager->BeforeRender();
+	render_manager->BeforeRender(delta);
 	
 	for (auto&& object : object_list)
 	{
 		// if(object -> render)
+		//		set trans...
 		//		draw....
 	}
 
-	render_manager->AfterRender();
+	render_manager->AfterRender(delta);
 }
 
 void Game::arrange_object_list()

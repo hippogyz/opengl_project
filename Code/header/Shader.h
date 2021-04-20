@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <memory>
+#include <string>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -10,6 +12,7 @@
 class Shader {
 public:
 	unsigned int prog;
+	std::size_t shader_hash;
 	
 	Shader();
 	~Shader();

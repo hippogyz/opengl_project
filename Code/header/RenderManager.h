@@ -9,24 +9,30 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 class Shader;
 class Model;
 class Camera;
+class Light;
 
 
 class RenderManager {
 public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
-	Camera* camera; // camera component -------------------------------------should use weak ptr
+	std::weak_ptr<Camera> camera; // camera component
+	// light.....
 
 public:
 	RenderManager();
 	~RenderManager();
 
-	void BeforeRender(); // update camera for shaders
-	void AfterRender(); 
+	void BeforeRender(float delta); // update camera for shaders
+	void AfterRender(float delta);
+
+	std::weak_ptr<Model> assign_model( std::string model_path );
+	std::weak_ptr<Shader> assign_shader_VF(const char* vs_path, const char* fs_path );
 
 private:
 	GLFWwindow* window;

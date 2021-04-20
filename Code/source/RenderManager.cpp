@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include "Game.h"
+#include "Model.h"
+#include "Shader.h"
 
 const unsigned int RenderManager::SCR_WIDTH = 600;
 const unsigned int RenderManager::SCR_HEIGHT = 600;
@@ -53,21 +55,54 @@ void RenderManager::initializeOpenGL()
     glEnable(GL_DEPTH_TEST);
 }
 
-void RenderManager::BeforeRender()
+void RenderManager::BeforeRender(float delta)
 {
     clearBuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+    // update window
     // update camera
-
+    // update projection
+    // update light
 }
 
-void RenderManager::AfterRender()
+void RenderManager::AfterRender(float delta)
 {
-    // nothing to do now
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 
+std::weak_ptr<Model> RenderManager::assign_model(std::string model_path)
+{
+    std::size_t m_hash = std::hash<std::string>() (model_path);
 
+    for (auto&& model : models)
+    {
+        if (model->model_hash == m_hash)
+        {
+            return std::weak_ptr<Model> (model);
+        }
+    }
+
+    std::shared_ptr<Model> model = std::make_shared<Model>(model_path);
+    models.push_back(model);
+    return std::weak_ptr<Model>(model);
+}
+
+std::weak_ptr<Shader> RenderManager::assign_shader_VF(const char* vs_path, const char* fs_path)
+{
+    std::size_t m_hash = std::hash<std::string>() (std::string(vs_path) + std::string(fs_path));
+
+    for (auto&& shader : shaders)
+    {
+        if (shader->shader_hash == m_hash)
+            return std::weak_ptr<Shader>(shader);
+    }
+
+    std::shared_ptr<Shader> shader = std::make_shared<Shader>();
+    shader->initializeShaderVF(vs_path, fs_path);
+    shaders.push_back(shader);
+    return std::weak_ptr<Shader>(shader);
+}
 
 
 void RenderManager::clearBuffer(GLenum config)
