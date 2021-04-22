@@ -1,7 +1,7 @@
 #include "Component/TransformComponent.h"
 #include <iostream>
 
-COMPONENT_DEFINITION( Component, TransformComponent )
+COMPONENT_DEFINITION(Component, TransformComponent);
 
 const float TransformComponent::scale_min = 0.01;
 const float TransformComponent::scale_max = 100.0;
@@ -41,22 +41,6 @@ TransformComponent::~TransformComponent()
 	}
 }
 
-glm::mat4 TransformComponent::get_trans_matrix()
-{
-	return trans_matrix;
-}
-
-void TransformComponent::update(float delta)
-{
-	update_transform();
-	cal_trans_matrix();
-}
-
-void TransformComponent::start()
-{
-
-}
-
 void TransformComponent::initialize()
 {
 	//parent_trans = nullptr;
@@ -71,6 +55,17 @@ void TransformComponent::initialize()
 	g_rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
 	g_scale = 1.0;
 	trans_matrix = glm::mat4(1.0);
+}
+
+glm::mat4 TransformComponent::get_trans_matrix()
+{
+	return trans_matrix;
+}
+
+void TransformComponent::update(float delta)
+{
+	update_transform();
+	cal_trans_matrix();
 }
 
 void TransformComponent::update_transform()

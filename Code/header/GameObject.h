@@ -6,6 +6,7 @@
 
 class Component;
 class TransformComponent;
+class RenderComponent;
 
 class GameObject {
 public: // member
@@ -15,6 +16,7 @@ public: // member
 	bool is_active;
 	std::vector< std::shared_ptr<Component> > component_list;
 	std::shared_ptr<TransformComponent> transform;
+	std::shared_ptr<RenderComponent> renderer;
 
 public: // method
 	GameObject(std::string name, bool active = true);
@@ -23,7 +25,7 @@ public: // method
 	//void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);
-	//void render();
+	//void render(float delta);
 
 	void rename(std::string name);
 	

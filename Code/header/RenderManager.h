@@ -15,6 +15,7 @@ class Shader;
 class Model;
 class Camera;
 class Light;
+class GameObject;
 
 
 class RenderManager {

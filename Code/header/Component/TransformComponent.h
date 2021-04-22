@@ -25,6 +25,11 @@ public:
 
 public:
 	TransformComponent(GameObject* gameobject, int order = TRANSFORM_ORDER);
+	// TransformComponent(GameObject* gameobject, glm::vec3 position, int order = TRANSFORM_ORDER);
+	// TransformComponent(GameObject* gameobject, glm::vec3 position, glm::quat rotation, int order = TRANSFORM_ORDER);
+	// TransformComponent(GameObject* gameobject, glm::vec3 position, float scale, int order = TRANSFORM_ORDER);
+	// TransformComponent(GameObject* gameobject, glm::vec3 position, glm::quat rotation, float scale, int order = TRANSFORM_ORDER);
+	// TransformComponent(GameObject* gameobject, float scale, int order = TRANSFORM_ORDER);
 	virtual ~TransformComponent();
 
 	glm::mat4 get_trans_matrix();
@@ -49,7 +54,6 @@ public:
 
 protected:
 	virtual void update(float delta);
-	virtual void start();
 
 private:
 	bool global_mode;
