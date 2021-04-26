@@ -59,10 +59,29 @@ void RenderManager::BeforeRender(float delta)
 {
     clearBuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
     // update window
+    window_time += delta;
     // update camera
+    glm::mat4 view = glm::mat4(1.0f); // ---------------------- camera
+    glm::vec3 camera_position = glm::vec3(1.0f); // ---------------------
     // update projection
     // update light
+
+    for (auto&& shader : shaders)
+    {
+        shader->useShader();
+
+        shader->setTrans("view", view);
+        shader->setTrans("projection", projection);
+
+        // fragment uniform
+        shader->setFloat("u_time", window_time);
+        shader->setFloat("u_mouse", float(mouse_position[0]), float(window_size[1]) - float(mouse_position[1]));
+        shader->setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
+
+        shader->setFloat("camera_position", camera_position.x, camera_position.y, camera_position.z);
+    }
 }
 
 void RenderManager::AfterRender(float delta)

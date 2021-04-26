@@ -25,7 +25,7 @@ public: // method
 	//void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);
-	//void render(float delta);
+	void render(float delta);
 
 	void rename(std::string name);
 	

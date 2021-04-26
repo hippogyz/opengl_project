@@ -5,7 +5,7 @@
 class Shader;
 class Model;
 
-class RenderComponent:Component {
+class RenderComponent:public Component {
 
 	COMPONENT_DECLARATION(TransformComponent)
 

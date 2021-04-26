@@ -75,7 +75,7 @@ void Game::render(float delta)
 	
 	for (auto&& object : object_list)
 	{
-		// object->render ( object->renderer->uniform_update )
+		object->render(delta); // with draw call
 	}
 
 	render_manager->AfterRender(delta);

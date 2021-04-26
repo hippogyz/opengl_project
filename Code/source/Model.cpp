@@ -12,6 +12,13 @@ Model::Model(const std::string path)
 	load_mesh(path);
 }
 
+Model::Model(const std::string name, std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+{
+	model_hash = std::hash<std::string>()(name);
+
+	meshes.push_back(Mesh(vertices, indices, textures));
+}
+
 Model::~Model()
 {
 	for (auto&& texture : loaded_textures)
@@ -171,9 +178,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material)
 	return textures;
 }
 
-static unsigned int texture_from_file(const char* file, std::string dictionary)
+static unsigned int texture_from_file(std::string filename)
 {
-	std::string filename = dictionary + '/' + file;
 	unsigned int id;
 
 	int width, height, nrComponents;
@@ -212,11 +218,17 @@ static unsigned int texture_from_file(const char* file, std::string dictionary)
 	else
 	{
 		printf(" --- \"Model.cpp\" texture_from_file: loaded texture at path %s--- is oversized with %d bytes \n",
-			filename.c_str(), int(strlen((char*)(data))) );
+			filename.c_str(), int(strlen((char*)(data))));
 		id = 0;
 	}
 	stbi_image_free(data);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return id;
+}
+
+static unsigned int texture_from_file(const char* file, std::string dictionary)
+{
+	std::string filename = dictionary + '/' + file;
+	return texture_from_file(filename);
 }

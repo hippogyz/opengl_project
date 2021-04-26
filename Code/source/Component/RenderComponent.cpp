@@ -1,7 +1,11 @@
 #include "Component/RenderComponent.h"
+
 #include <iostream>
 #include "Game.h"
 #include "RenderManager.h"
+#include "Model.h"
+#include "Shader.h"
+#include "Component/TransformComponent.h"
 
 COMPONENT_DEFINITION(Component, RenderComponent);
 
@@ -27,4 +31,14 @@ void RenderComponent::initialize_renderer(std::string model_path, const char* vs
 void RenderComponent::update(float delta) 
 {
 	//////////////////////////
+	Shader mShader = *(shader.lock());
+
+	glm::mat4 model_trans = gameobject->transform->get_trans_matrix();
+	glm::mat4 norm_mat = glm::transpose(glm::inverse(model_trans));
+
+	mShader.useShader();
+	mShader.setTrans("model", model_trans);
+	mShader.setTrans("norm_mat", norm_mat);
+
+	model.lock()->Draw(mShader);
 }

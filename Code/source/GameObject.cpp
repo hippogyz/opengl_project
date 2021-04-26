@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Component.h"
 #include "Component/TransformComponent.h"
+#include "Component/RenderComponent.h"
 
 #include <iostream>
 #include <algorithm> // std::sort
@@ -14,6 +15,7 @@ GameObject::GameObject(std::string name, bool active)
 	first_update = false;
 
 	transform = std::make_shared<TransformComponent>(this);
+	renderer = std::make_shared<RenderComponent>(this);
 }
 
 GameObject::~GameObject()
@@ -44,6 +46,14 @@ void GameObject::physics_update(float delta)
 	if ( is_active && transform )
 	{
 		transform->uniform_update(delta);
+	}
+}
+
+void GameObject::render(float delta)
+{
+	if (is_active && renderer)
+	{
+		renderer->uniform_update(delta);
 	}
 }
 

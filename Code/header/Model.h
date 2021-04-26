@@ -14,6 +14,7 @@ public:
 	std::size_t model_hash;
 
 	Model(const std::string path);
+	Model(const std::string name, std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 	virtual ~Model();
 
 	void Draw(Shader& shader);
