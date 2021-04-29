@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "RenderManager.h"
 
+#include "TestObject/Cubic.h"
+
 Game& Game::access()
 {
 	static Game game;
@@ -21,12 +23,13 @@ Game::~Game()
 void Game::initialize()
 {
 	render_manager = std::make_shared<RenderManager>();
+
+	add_object<Cubic>("Cubic(0)");
 }
 
 void Game::game_update(float delta)
 {
 	// process input
-
 	uniform_update(delta);
 	physics_update(delta);
 	// render

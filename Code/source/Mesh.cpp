@@ -10,6 +10,9 @@ Mesh::Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, 
 	this->indices = indices;
 	this->textures = textures;
 
+    ambient = 0.1;
+    shininess = 256.0;
+
 	initialize_mesh();
 }
 
@@ -56,10 +59,10 @@ void Mesh::Draw(Shader& shader)
         switch (texture.type)
         {
             case DIFFUSE_TEXT:
-                shader.setInt("material.diffuse_texture", textureOrder);
+                shader.setInt("material.default_texture", textureOrder);
                 break;
             case SPECULAR_TEXT:
-                shader.setInt("material.diffuse_texture", textureOrder);
+                shader.setInt("material.specular_texture", textureOrder);
                 break;
             case NORMAL_TEXT:
                 shader.setInt("material.normal_texture", textureOrder);
@@ -76,6 +79,9 @@ void Mesh::Draw(Shader& shader)
 
         ++textureOrder;
     }
+
+    shader.setFloat("material.ambient", ambient);
+    shader.setFloat("material.shininess", shininess);
 
     // draw call
     glBindVertexArray(VAO);

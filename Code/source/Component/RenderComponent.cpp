@@ -19,6 +19,14 @@ RenderComponent::~RenderComponent()
 
 }
 
+void RenderComponent::initialize_renderer(const Model& t_model, const char* vs_path, const char* fs_path)
+{
+	RenderManager* render_manager = Game::access().render_manager.get();
+	model = render_manager->assign_model(t_model);
+	shader = render_manager->assign_shader_VF(vs_path, fs_path);
+	is_active = true;
+}
+
 void RenderComponent::initialize_renderer(std::string model_path, const char* vs_path, const char* fs_path)
 {
 	RenderManager* render_manager = Game::access().render_manager.get();
@@ -30,7 +38,6 @@ void RenderComponent::initialize_renderer(std::string model_path, const char* vs
 // for RenderComponent, update is equal to render
 void RenderComponent::update(float delta) 
 {
-	//////////////////////////
 	Shader mShader = *(shader.lock());
 
 	glm::mat4 model_trans = gameobject->transform->get_trans_matrix();

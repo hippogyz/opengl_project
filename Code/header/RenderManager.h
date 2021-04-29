@@ -32,6 +32,7 @@ public:
 	void BeforeRender(float delta); // update camera for shaders
 	void AfterRender(float delta);
 
+	std::weak_ptr<Model> assign_model(const Model& t_model);
 	std::weak_ptr<Model> assign_model( std::string model_path );
 	std::weak_ptr<Shader> assign_shader_VF(const char* vs_path, const char* fs_path );
 

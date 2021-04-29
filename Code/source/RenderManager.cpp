@@ -90,6 +90,22 @@ void RenderManager::AfterRender(float delta)
     glfwPollEvents();
 }
 
+std::weak_ptr<Model> RenderManager::assign_model(const Model& t_model)
+{
+    std::size_t m_hash = t_model.model_hash;
+
+    for (auto&& model : models)
+    {
+        if (model->model_hash == m_hash)
+        {
+            return std::weak_ptr<Model>(model);
+        }
+    }
+    std::shared_ptr<Model> model = std::make_shared<Model>(t_model);
+    models.push_back(model);
+    return std::weak_ptr<Model>(model);
+}
+
 std::weak_ptr<Model> RenderManager::assign_model(std::string model_path)
 {
     std::size_t m_hash = std::hash<std::string>() (model_path);

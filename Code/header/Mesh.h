@@ -31,6 +31,9 @@ public:
 	std::vector<Texture> textures;
 	unsigned int VAO;
 
+	float ambient;
+	float shininess;
+
 	Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, std::vector<Texture>textures);
 	virtual ~Mesh();
 

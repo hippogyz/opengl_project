@@ -3,6 +3,7 @@
 #include <iostream>
 #include "stb_image.h"
 
+static unsigned int texture_from_file(std::string filename);
 static unsigned int texture_from_file(const char* file, std::string dictionary);
 
 Model::Model(const std::string path)
