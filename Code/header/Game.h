@@ -16,6 +16,7 @@ public:
 	Game(const Game&) = delete;
 	Game& operator = (const Game&) = delete;
 
+	void initialize();
 	void game_update(float delta);	
 	template < typename GameObjectType, typename... Args >
 		void add_object(Args&&... args);
@@ -27,7 +28,6 @@ private:
 private:
 	Game();
 
-	void initialize();
 	void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);

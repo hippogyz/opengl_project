@@ -17,7 +17,7 @@ Model::Model(const std::string name, std::vector<Vertex> vertices, std::vector<u
 {
 	model_hash = std::hash<std::string>()(name);
 
-	meshes.push_back(Mesh(vertices, indices, textures));
+	meshes.emplace_back(vertices, indices, textures);
 }
 
 Model::~Model()
@@ -28,7 +28,7 @@ Model::~Model()
 	}
 }
 
-void Model::Draw(Shader& shader)
+void Model::Draw(Shader* shader)
 {
 	for (auto&& mesh : meshes)
 	{
@@ -60,7 +60,7 @@ void Model::process_node(aiNode* node, const aiScene* scene)
 	for (int i = 0; i < node->mNumMeshes; ++i)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(process_mesh( mesh, scene ));
+		process_mesh( mesh, scene );
 	}
 
 	for (int i = 0; i < node->mNumChildren; ++i)
@@ -70,7 +70,7 @@ void Model::process_node(aiNode* node, const aiScene* scene)
 	}
 }
 
-Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene)
+void Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector< Vertex > vertices;
 	std::vector< unsigned int > indices;
@@ -124,7 +124,7 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 
 	textures = loadMaterialTextures(material);
 
-	return Mesh(vertices, indices, textures);
+	meshes.emplace_back(vertices, indices, textures);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material)

@@ -16,7 +16,8 @@ class Model;
 class Camera;
 class Light;
 class GameObject;
-
+struct Vertex;
+struct Texture;
 
 class RenderManager {
 public:
@@ -32,7 +33,8 @@ public:
 	void BeforeRender(float delta); // update camera for shaders
 	void AfterRender(float delta);
 
-	std::weak_ptr<Model> assign_model(const Model& t_model);
+	std::weak_ptr<Model> assign_model(std::string model_name, std::vector< Vertex > vertices, 
+																	std::vector< unsigned int > indices,	std::vector<Texture>textures );
 	std::weak_ptr<Model> assign_model( std::string model_path );
 	std::weak_ptr<Shader> assign_shader_VF(const char* vs_path, const char* fs_path );
 
@@ -54,5 +56,5 @@ private:
 	void clearBuffer(GLenum config);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);// link to input_controller
 	static void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y); // link to input_controller
-	void processInput(GLFWwindow* window);// link to input_controller
+	void process_input(GLFWwindow* window);// link to input_controller
 };

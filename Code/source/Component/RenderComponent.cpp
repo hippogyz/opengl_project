@@ -19,10 +19,11 @@ RenderComponent::~RenderComponent()
 
 }
 
-void RenderComponent::initialize_renderer(const Model& t_model, const char* vs_path, const char* fs_path)
+void RenderComponent::initialize_renderer(std::string model_name, std::vector< Vertex > vertices, std::vector< unsigned int > indices,
+																			std::vector<Texture>textures, const char* vs_path, const char* fs_path)
 {
 	RenderManager* render_manager = Game::access().render_manager.get();
-	model = render_manager->assign_model(t_model);
+	model = render_manager->assign_model(model_name, vertices, indices, textures );
 	shader = render_manager->assign_shader_VF(vs_path, fs_path);
 	is_active = true;
 }
@@ -38,14 +39,14 @@ void RenderComponent::initialize_renderer(std::string model_path, const char* vs
 // for RenderComponent, update is equal to render
 void RenderComponent::update(float delta) 
 {
-	Shader mShader = *(shader.lock());
+	std::shared_ptr<Shader> mShader = shader.lock();
 
 	glm::mat4 model_trans = gameobject->transform->get_trans_matrix();
 	glm::mat4 norm_mat = glm::transpose(glm::inverse(model_trans));
 
-	mShader.useShader();
-	mShader.setTrans("model", model_trans);
-	mShader.setTrans("norm_mat", norm_mat);
+	mShader->useShader();
+	mShader->setTrans("model", model_trans);
+	mShader->setTrans("norm_mat", norm_mat);
 
-	model.lock()->Draw(mShader);
+	model.lock()->Draw(mShader.get());
 }

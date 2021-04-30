@@ -3,6 +3,10 @@
 #include "RenderManager.h"
 
 #include "TestObject/Cubic.h"
+#include "Component/TransformComponent.h"
+#include "Model.h"
+#include "Shader.h"
+#include <iostream>
 
 Game& Game::access()
 {
@@ -12,7 +16,7 @@ Game& Game::access()
 
 Game::Game()
 {
-	initialize();
+	render_manager = std::make_shared<RenderManager>();
 }
 
 Game::~Game()
@@ -22,9 +26,18 @@ Game::~Game()
 
 void Game::initialize()
 {
-	render_manager = std::make_shared<RenderManager>();
-
 	add_object<Cubic>("Cubic(0)");
+	add_object<Cubic>("Cubic(1)");
+	add_object<Cubic>("Cubic(2)");
+
+	arrange_object_list();
+
+	auto obj = object_list.begin();
+	(*obj)->transform->set_local_position(glm::vec3(0.0, -1.0, -3.0));
+	obj++;
+	(*obj)->transform->set_local_position(glm::vec3(0.0, 0.5, -5.0));
+	obj++;
+	(*obj)->transform->set_local_position(glm::vec3(1.0, -0.5, -2.0));
 }
 
 void Game::game_update(float delta)
@@ -32,7 +45,7 @@ void Game::game_update(float delta)
 	// process input
 	uniform_update(delta);
 	physics_update(delta);
-	// render
+	render(delta);
 
 	arrange_object_list();
 }
@@ -80,7 +93,7 @@ void Game::render(float delta)
 	{
 		object->render(delta); // with draw call
 	}
-
+	
 	render_manager->AfterRender(delta);
 }
 

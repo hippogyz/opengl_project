@@ -13,6 +13,7 @@ Shader::Shader()
 
 Shader::~Shader() 
 {
+    std::cout << "shader " << prog << " destroyed" << std::endl;
 	glDeleteProgram(prog);
 }
 

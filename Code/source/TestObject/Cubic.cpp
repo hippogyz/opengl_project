@@ -6,7 +6,9 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+#include "Component/TransformComponent.h"
 #include "Component/RenderComponent.h"
+#include "TestObject/CubicComponent.h"
 
 static std::vector<Vertex> set_cubic_vertices();
 static std::vector<unsigned int> set_cubic_indices();
@@ -23,20 +25,22 @@ void Cubic::initialize_cubic()
 	static std::vector<Vertex> vertices = set_cubic_vertices();
 	static std::vector<unsigned int> indices = set_cubic_indices();
 	static std::vector<Texture> textures = set_cubic_textures();
-	static Model cubic_model = Model("cubic_mode", vertices, indices, textures);
 	static const char* vs_path = "opengl_project/Code/shader/vertex_shader.vs";
 	static const char* fs_path = "opengl_project/Code/shader/frag_shader.fs";
 
-	renderer->initialize_renderer(cubic_model, vs_path, fs_path);
+	renderer->initialize_renderer("cubic_model", vertices, indices, textures, vs_path, fs_path);
+	std::cout << "cubic builded " << std::endl;
+
+	addComponent<CubicComponent>(this);
+}
+
+void Cubic::update(float delta)
+{
+
 }
 
 static std::vector<Vertex> set_cubic_vertices()
 {
-	int vertex_num = 24;
-	int vertex_size = 8;
-
-	std::vector<Vertex> vertices;
-
 	float vertex_data[] = {
 	-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0,  1.0f, 0.0f,
@@ -68,6 +72,11 @@ static std::vector<Vertex> set_cubic_vertices()
 	 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0, 1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0, 0.0f, 0.0f
 	};
+
+	int vertex_num = 24;
+	int vertex_size = 8;
+
+	std::vector<Vertex> vertices;
 
 	for (int i = 0; i < vertex_num; ++i)
 	{

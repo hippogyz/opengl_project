@@ -29,7 +29,6 @@ public:
 	std::vector< Vertex > vertices;
 	std::vector< unsigned int > indices; // for EBO
 	std::vector<Texture> textures;
-	unsigned int VAO;
 
 	float ambient;
 	float shininess;
@@ -37,9 +36,10 @@ public:
 	Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, std::vector<Texture>textures);
 	virtual ~Mesh();
 
-	void Draw(Shader& shader);
+	void Draw(Shader* shader);
 
 private:
+	unsigned int VAO;
 	unsigned int VBO, EBO;
 
 	void initialize_mesh();

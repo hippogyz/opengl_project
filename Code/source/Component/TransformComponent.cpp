@@ -45,14 +45,14 @@ void TransformComponent::initialize()
 {
 	//parent_trans = nullptr;
 	position = glm::vec3(0.0);
-	rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
+	rotation = glm::quat(1.0, 0.0, 0.0, 0.0);
 	scale = 1.0;
 
 	global_mode = false;
 	dirty_mark = false;
 
 	g_position = glm::vec3(0.0);
-	g_rotation = glm::quat(0.0, 0.0, 0.0, 1.0);
+	g_rotation = glm::quat(1.0, 0.0, 0.0, 0.0);
 	g_scale = 1.0;
 	trans_matrix = glm::mat4(1.0);
 }

@@ -20,6 +20,10 @@
 #include "Component/TransformComponent.h"
 
 
+#include "RenderManager.h"
+#include "Model.h"
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y);
 void processInput(GLFWwindow* window);
@@ -43,12 +47,17 @@ double cursor_last_y = 0.0;
 //      camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
-//#define TEST_MODE
+#define TEST_MODE
 
 int main()
 {
 #ifdef TEST_MODE
-    Game::access();
+    Game::access().initialize();
+
+    while (1)
+    {
+        Game::access().game_update(0.05f);
+    }
 
 #else
 
