@@ -1,12 +1,16 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "RenderManager.h"
+#include "InputManager.h"
 
+#include <iostream>
+
+// for test
 #include "TestObject/Cubic.h"
+#include "TestObject/CubicMoveComponent.h"
 #include "Component/TransformComponent.h"
 #include "Model.h"
 #include "Shader.h"
-#include <iostream>
 
 Game& Game::access()
 {
@@ -17,6 +21,7 @@ Game& Game::access()
 Game::Game()
 {
 	render_manager = std::make_shared<RenderManager>();
+	input_manager = std::make_shared<InputManager>(render_manager->window);
 }
 
 Game::~Game()
@@ -38,11 +43,12 @@ void Game::initialize()
 	(*obj)->transform->set_local_position(glm::vec3(0.0, 0.5, -5.0));
 	obj++;
 	(*obj)->transform->set_local_position(glm::vec3(1.0, -0.5, -2.0));
+	(*obj)->addComponent<CubicMoveComponent>( obj->get() );
 }
 
 void Game::game_update(float delta)
 {
-	// process input
+	process_input(delta);
 	uniform_update(delta);
 	physics_update(delta);
 	render(delta);
@@ -53,13 +59,7 @@ void Game::game_update(float delta)
 
 void Game::process_input(float delta)
 {
-	for (auto&& object : object_list)
-	{
-		if (object->is_alive)
-		{
-			// object -> process_input(delta);
-		}
-	}
+	input_manager->process_input(delta);
 }
 
 void Game::uniform_update(float delta)
@@ -91,7 +91,10 @@ void Game::render(float delta)
 	
 	for (auto&& object : object_list)
 	{
-		object->render(delta); // with draw call
+		if (object->is_alive)
+		{
+			object->render(delta); // with draw call
+		}
 	}
 	
 	render_manager->AfterRender(delta);

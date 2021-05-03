@@ -20,6 +20,9 @@ struct Vertex;
 struct Texture;
 
 class RenderManager {
+
+	friend class Game;
+
 public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
@@ -30,7 +33,7 @@ public:
 	RenderManager();
 	~RenderManager();
 
-	void BeforeRender(float delta); // update camera for shaders
+	void BeforeRender(float delta); // update camera for shaders // only called by game, it would be better set as private?
 	void AfterRender(float delta);
 
 	std::weak_ptr<Model> assign_model(std::string model_name, std::vector< Vertex > vertices, 

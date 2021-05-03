@@ -4,10 +4,12 @@
 
 class GameObject;
 class RenderManager;
+class InputManager;
 
 class Game {
 public:
 	std::shared_ptr<RenderManager> render_manager;
+	std::shared_ptr<InputManager> input_manager;
 
 public:
 	// instance

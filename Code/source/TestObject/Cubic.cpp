@@ -9,6 +9,7 @@
 #include "Component/TransformComponent.h"
 #include "Component/RenderComponent.h"
 #include "TestObject/CubicComponent.h"
+#include "TestObject/CubicMoveComponent.h"
 
 static std::vector<Vertex> set_cubic_vertices();
 static std::vector<unsigned int> set_cubic_indices();

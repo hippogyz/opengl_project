@@ -11,5 +11,4 @@ public:
 
 protected:
 	virtual void update(float delta);
-
 };
