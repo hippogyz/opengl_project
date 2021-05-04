@@ -22,6 +22,8 @@ Game::Game()
 {
 	render_manager = std::make_shared<RenderManager>();
 	input_manager = std::make_shared<InputManager>(render_manager->window);
+
+	exit_window = false;
 }
 
 Game::~Game()
@@ -46,7 +48,14 @@ void Game::initialize()
 	(*obj)->addComponent<CubicMoveComponent>( obj->get() );
 }
 
-void Game::game_update(float delta)
+void Game::uninitialize()
+{
+	object_list.clear();
+	input_manager.reset();
+	render_manager.reset();
+}
+
+bool Game::game_update(float delta)
 {
 	process_input(delta);
 	uniform_update(delta);
@@ -54,11 +63,14 @@ void Game::game_update(float delta)
 	render(delta);
 
 	arrange_object_list();
+
+	return exit_window;
 }
 
 
 void Game::process_input(float delta)
 {
+	exit_window = input_manager->exit_window();
 	input_manager->process_input(delta);
 }
 

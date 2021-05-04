@@ -19,11 +19,14 @@ public:
 	Game& operator = (const Game&) = delete;
 
 	void initialize();
-	void game_update(float delta);	
+	void uninitialize();
+	bool game_update(float delta);	
 	template < typename GameObjectType, typename... Args >
 		void add_object(Args&&... args);
 
 private:
+	bool exit_window;
+	
 	std::list < std::shared_ptr<GameObject> >object_list;
 	std::list< std::shared_ptr<GameObject> >add_buffer;
 

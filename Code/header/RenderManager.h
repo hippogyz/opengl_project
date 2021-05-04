@@ -57,7 +57,4 @@ private:
 	void initializeOpenGL();
 
 	void clearBuffer(GLenum config);
-	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);// link to input_controller
-	static void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y); // link to input_controller
-	void process_input(GLFWwindow* window);// link to input_controller
 };

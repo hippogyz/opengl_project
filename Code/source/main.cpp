@@ -54,10 +54,12 @@ int main()
 #ifdef TEST_MODE
     Game::access().initialize();
 
-    while (1)
+    while (!Game::access().game_update(0.05f))
     {
-        Game::access().game_update(0.05f);
+        
     }
+
+    Game::access().uninitialize();
 
 #else
 

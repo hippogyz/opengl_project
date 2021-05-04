@@ -5,12 +5,19 @@ InputManager::InputManager(GLFWwindow* window, GameType type)
 {
 	this->window = window;
 	initialize(type);
+
+	first_cursor_move = true;
+
+	access(this);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback );
+	glfwSetCursorPosCallback(window, cursor_move_callback);
 }
 
 void InputManager::initialize(GameType type)
 {
 	switch (type) {
 	case FPS_GAME:
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		register_key("W", GLFW_KEY_W);
 		register_key("A", GLFW_KEY_A);
 		register_key("S", GLFW_KEY_S);
@@ -20,8 +27,14 @@ void InputManager::initialize(GameType type)
 	}
 }
 
+bool InputManager::exit_window()
+{
+	return glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+}
+
 void InputManager::process_input(float delta)
 {
+	// exit game
 	for (auto it = key_list.begin(); it != key_list.end(); ++it)
 	{
 		it->second.last = it->second.current;
@@ -30,6 +43,7 @@ void InputManager::process_input(float delta)
 	// something else maybe
 }
 
+// keyboard part
 void InputManager::register_key(std::string key, int glfw_order)
 {
 	if (key_list.find(key) == key_list.end())
@@ -103,3 +117,43 @@ bool InputManager::is_unhold(std::string key)
 	return false;
 }
 
+// cursor part
+float* InputManager::get_cursor_move()
+{
+	return cursor_move;
+}
+
+
+// static method
+InputManager* InputManager::access(InputManager* manager)
+{
+	static InputManager* instance = nullptr;
+
+	if (instance == nullptr)
+		instance = manager;
+
+	return instance;
+}
+
+void InputManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
+void InputManager::cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y)
+{
+	InputManager* manager = access();
+	if (manager->first_cursor_move)
+	{
+		manager->last_cursor_pos[0] = (float) cursor_x;
+		manager->last_cursor_pos[1] = (float) cursor_y;
+
+		manager->first_cursor_move = false;
+	}
+
+	manager->cursor_move[0] = (float) cursor_x - manager->last_cursor_pos[0];
+	manager->cursor_move[1] = (float) cursor_y - manager->last_cursor_pos[1];
+
+	manager->last_cursor_pos[0] = (float)cursor_x;
+	manager->last_cursor_pos[1] = (float)cursor_y;
+}

@@ -46,9 +46,6 @@ void RenderManager::initializeOpenGL()
     }
 
     glfwMakeContextCurrent(window);
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    //glfwSetCursorPosCallback(window, cursor_move_callback);
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // fix cursor for First Personal Sight
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -71,6 +68,7 @@ void RenderManager::BeforeRender(float delta)
 
     // update window
     window_time += delta;
+    glfwGetWindowSize(window, &(window_size[0]), &(window_size[1]));
     // update camera
     glm::vec3 camera_position = glm::vec3(0.0, 0.0, 3.0); // ---------------------
     glm::mat4 view = glm::lookAt(camera_position, camera_position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)); // ---------------------- camera
@@ -156,28 +154,4 @@ void RenderManager::clearBuffer(GLenum config)
 {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(config);
-}
-
-void RenderManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-void RenderManager::cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y)
-{
- //   Game::access().input_controller.XXXXX
-/*
-    if (first_cursor)
-    {
-        cursor_last_x = cursor_x;
-        cursor_last_y = cursor_y;
-        first_cursor = false;
-    }
-
-    camera.rotateCamera(delta_time, float(cursor_last_x - cursor_x), float(cursor_last_y - cursor_y));
-    cursor_last_x = cursor_x;
-    cursor_last_y = cursor_y;
-    */
 }

@@ -24,19 +24,33 @@ class InputManager {
 public:
 	InputManager(GLFWwindow* window, GameType type = FPS_GAME);
 
+	// keyboard part
 	void process_input(float delta);
 
 	void register_key(std::string key, int glfw_order);
 	void logout_key(std::string key);
+
+	bool exit_window();
 
 	bool is_press(std::string key);
 	bool is_hold( std::string key );
 	bool is_release(std::string key);
 	bool is_unhold(std::string key);
 
+	// cursor part
+	float* get_cursor_move();
+
 private:
 	GLFWwindow* window;
 	std::unordered_map< std::string, KeyState > key_list;
 
+	bool first_cursor_move;
+	float last_cursor_pos[2];
+	float cursor_move[2];
+
 	void initialize(GameType type);
+
+	static InputManager* access(InputManager* manager = nullptr);
+	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+	static void cursor_move_callback(GLFWwindow* window, double cursor_x, double cursor_y);
 };
