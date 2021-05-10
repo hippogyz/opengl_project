@@ -23,6 +23,11 @@ public:
 	glm::quat rotation;
 	float scale; // only support uniform scaling
 
+	// global
+	glm::vec3 g_position;
+	glm::quat g_rotation;
+	float g_scale;
+
 public:
 	TransformComponent(GameObject* gameobject, int order = TRANSFORM_ORDER);
 	// TransformComponent(GameObject* gameobject, glm::vec3 position, int order = TRANSFORM_ORDER);
@@ -59,9 +64,6 @@ private:
 	bool global_mode;
 	bool dirty_mark;
 
-	glm::vec3 g_position;
-	glm::quat g_rotation;
-	float g_scale;
 	glm::mat4 trans_matrix;
 
 private:

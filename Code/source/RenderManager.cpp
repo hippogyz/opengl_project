@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Model.h"
 #include "Shader.h"
+#include "Component/CameraComponent.h"
 
 const unsigned int RenderManager::SCR_WIDTH = 600;
 const unsigned int RenderManager::SCR_HEIGHT = 600;
@@ -17,6 +18,10 @@ RenderManager::RenderManager()
     mouse_position[1] = 0.0;
     window_size[0] = SCR_WIDTH;
     window_size[1] = SCR_HEIGHT;
+
+    camera_position = glm::vec3(0.0, 0.0, 3.0);
+    view = glm::lookAt(camera_position, camera_position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0));
+    projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
 
 	initializeOpenGL();
 }
@@ -69,11 +74,18 @@ void RenderManager::BeforeRender(float delta)
     // update window
     window_time += delta;
     glfwGetWindowSize(window, &(window_size[0]), &(window_size[1]));
+    
     // update camera
-    glm::vec3 camera_position = glm::vec3(0.0, 0.0, 3.0); // ---------------------
-    glm::mat4 view = glm::lookAt(camera_position, camera_position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 1.0, 0.0)); // ---------------------- camera
+    std::shared_ptr<CameraComponent> current_camera = camera.lock();
+    if (current_camera != nullptr)
+    {
+        camera_position = current_camera->get_position();
+        view = current_camera->get_view();
+    }
+
     // update projection
-    projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
+     projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
+    
     // update light
 
     for (auto&& shader : shaders)
@@ -149,6 +161,20 @@ std::weak_ptr<Shader> RenderManager::assign_shader_VF(const char* vs_path, const
     return std::weak_ptr<Shader>(shader);
 }
 
+void RenderManager::assign_camera(std::weak_ptr<CameraComponent>& camera)
+{
+    std::shared_ptr<CameraComponent> pre_camera = this->camera.lock();
+    if (pre_camera.get() != camera.lock().get())
+    {
+        if (pre_camera != nullptr)
+        {
+            pre_camera->first_update = false;
+            pre_camera->is_active = false;
+        }
+
+        this->camera = camera;
+    }
+}
 
 void RenderManager::clearBuffer(GLenum config)
 {

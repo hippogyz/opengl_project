@@ -66,7 +66,7 @@ std::weak_ptr<ComponentName> GameObject::getComponent()
 	{
 		if (component->isComponentType(ComponentName::Type))
 		{
-			wp = component;
+			wp = std::dynamic_pointer_cast<ComponentName>(component);
 		}
 	}
 

@@ -8,6 +8,7 @@ class CubicComponent : public Component
 
 public:
 	CubicComponent(GameObject* gameobject, int order = 1);
+	virtual ~CubicComponent() {};
 
 protected:
 	virtual void update(float delta);

@@ -12,6 +12,7 @@ class CubicMoveComponent : public Component
 
 public:
 	CubicMoveComponent(GameObject* gameobject, int order = 2);
+	virtual ~CubicMoveComponent() {};
 
 protected:
 	std::shared_ptr<InputManager> input_manager;

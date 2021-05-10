@@ -16,6 +16,7 @@ public: // basic declaration of Component class
 public: // member
 	int order;
 	bool is_active;
+	bool first_update;
 	GameObject* gameobject; // component is uniquely managered by gameobject, thus it might be safe to use trival pointer here
 
 public: // method
@@ -36,7 +37,6 @@ protected:
 	virtual void update(float delta);
 
 private:
-	bool first_update;
 	bool removed;
 };
 

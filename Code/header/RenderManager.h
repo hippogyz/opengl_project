@@ -13,9 +13,9 @@
 
 class Shader;
 class Model;
-class Camera;
 class Light;
 class GameObject;
+class CameraComponent;
 struct Vertex;
 struct Texture;
 
@@ -26,7 +26,7 @@ class RenderManager {
 public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
-	std::weak_ptr<Camera> camera; // camera component
+	std::weak_ptr<CameraComponent> camera; // camera component
 	// light.....
 
 public:
@@ -41,6 +41,8 @@ public:
 	std::weak_ptr<Model> assign_model( std::string model_path );
 	std::weak_ptr<Shader> assign_shader_VF(const char* vs_path, const char* fs_path );
 
+	void assign_camera(std::weak_ptr<CameraComponent>& camera);
+
 private:
 	GLFWwindow* window;
 
@@ -48,6 +50,8 @@ private:
 	double mouse_position[2];
 	int window_size[2];
 
+	glm::vec3 camera_position;
+	glm::mat4 view;
 	glm::mat4 projection;
 
 	static const unsigned int SCR_WIDTH;
