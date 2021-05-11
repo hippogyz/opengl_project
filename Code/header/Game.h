@@ -18,6 +18,8 @@ public:
 	Game(const Game&) = delete;
 	Game& operator = (const Game&) = delete;
 
+	void execute();
+
 	void initialize();
 	void uninitialize();
 	bool game_update(float delta);	

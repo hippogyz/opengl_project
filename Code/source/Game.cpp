@@ -33,6 +33,25 @@ Game::~Game()
 
 }
 
+void Game::execute()
+{
+	initialize();
+
+	float real_time = glfwGetTime();
+
+	while (!exit_window)
+	{
+		float pre_time = real_time;
+		real_time = glfwGetTime();
+		
+		float delta_time = (real_time - pre_time < 0.05f) ? real_time - pre_time : 0.05f;
+
+		game_update(delta_time);
+	}
+
+	uninitialize();
+}
+
 void Game::initialize()
 {
 	add_object<Cubic>("Cubic(0)");

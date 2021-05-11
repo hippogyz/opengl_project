@@ -8,7 +8,7 @@ COMPONENT_DEFINITION(Component, CubicMoveComponent);
 
 CubicMoveComponent::CubicMoveComponent(GameObject* gameobject, int order) : Component(gameobject, order)
 {
-	velocity = 0.05f;
+	velocity = 5.0f;
 }
 
 void CubicMoveComponent::start()

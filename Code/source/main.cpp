@@ -52,15 +52,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 int main()
 {
 #ifdef TEST_MODE
-    Game::access().initialize();
-
-    while (!Game::access().game_update(0.05f))
-    {
-        
-    }
-
-    Game::access().uninitialize();
-
+    Game::access().execute();
 #else
 
     // glfw: initialize and configure

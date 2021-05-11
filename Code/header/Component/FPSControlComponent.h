@@ -26,6 +26,9 @@ protected:
 	float sight_velocity;
 	float pitch_limit;
 
+	float pitch;
+	float yaw;
+
 	glm::vec3 sight_front;
 	glm::vec3 front;
 	glm::vec3 right;

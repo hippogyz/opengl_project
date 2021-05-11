@@ -11,5 +11,7 @@ public:
 	virtual ~CubicComponent() {};
 
 protected:
+	float spin_velocity;
+
 	virtual void update(float delta);
 };

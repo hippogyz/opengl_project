@@ -1,12 +1,15 @@
 #include "InputManager.h"
 #include <iostream>
 
+#include <glm/glm.hpp>
+
 InputManager::InputManager(GLFWwindow* window, GameType type)
 {
 	this->window = window;
 	initialize(type);
 
 	first_cursor_move = true;
+	cursor_moved = false;
 
 	access(this);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback );
@@ -41,6 +44,15 @@ void InputManager::process_input(float delta)
 		it->second.current = glfwGetKey(window, it->second.glfw_order) == GLFW_PRESS;
 	}
 	// something else maybe
+	if (!cursor_moved)
+	{
+		cursor_move[0] = 0.0f;
+		cursor_move[1] = 0.0f;
+	}
+	else
+	{
+		cursor_moved = false;
+	}
 }
 
 // keyboard part
@@ -151,9 +163,11 @@ void InputManager::cursor_move_callback(GLFWwindow* window, double cursor_x, dou
 		manager->first_cursor_move = false;
 	}
 
-	manager->cursor_move[0] = (float) cursor_x - manager->last_cursor_pos[0];
-	manager->cursor_move[1] = (float) cursor_y - manager->last_cursor_pos[1];
+	manager->cursor_move[0] = glm::clamp( (float) cursor_x - manager->last_cursor_pos[0] , -5.0f, 5.0f);
+	manager->cursor_move[1] = glm::clamp( (float) cursor_y - manager->last_cursor_pos[1], -5.0f, 5.0f);
 
 	manager->last_cursor_pos[0] = (float)cursor_x;
 	manager->last_cursor_pos[1] = (float)cursor_y;
+
+	manager->cursor_moved = true;
 }

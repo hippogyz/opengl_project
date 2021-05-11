@@ -45,6 +45,7 @@ private:
 	std::unordered_map< std::string, KeyState > key_list;
 
 	bool first_cursor_move;
+	bool cursor_moved;
 	float last_cursor_pos[2];
 	float cursor_move[2];
 
