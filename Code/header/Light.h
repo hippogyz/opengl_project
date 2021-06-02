@@ -14,10 +14,16 @@ class Light
 public:
 	Light(bool is_active, glm::vec3 diffuse, glm::vec3 specular);
 	virtual void setLight(Shader& shader_prog, const char* name) = 0;
+	void setLightWithName(Shader& shader_prog);
+	void setLightWithIndex(Shader& shader_prog, int index);
 	virtual ~Light() {};
 
 	bool is_active;
 	const char* light_type;
+
+	static const char* dir_name;
+	static const char* point_name;
+	static const char* spot_name;
 
 protected:
 	glm::vec3 diffuse;

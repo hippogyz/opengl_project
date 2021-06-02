@@ -32,7 +32,7 @@ public: // method
 	template < typename ComponentName > 
 		std::weak_ptr<ComponentName> getComponent();
 	template < typename ComponentName, typename... Args >
-		void addComponent(Args&&... args);
+		std::shared_ptr<ComponentName> addComponent(Args&&... args);
 	template < typename ComponentName >
 		void removeComponent();
 
@@ -74,10 +74,12 @@ std::weak_ptr<ComponentName> GameObject::getComponent()
 }
 
 template < typename ComponentName, typename... Args >
-void GameObject::addComponent(Args&&... args)
+std::shared_ptr<ComponentName> GameObject::addComponent(Args&&... args)
 {
 	auto component = std::make_shared<ComponentName>(std::forward<Args>(args)...);
 	add_buffer.push_back( component );
+
+	return component;
 }
 
 template <typename ComponentName>

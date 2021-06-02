@@ -13,10 +13,9 @@
 
 class Shader;
 class Model;
-class Light;
 class GameObject;
 class CameraComponent;
-class LightComponent;
+class LightManager;
 struct Vertex;
 struct Texture;
 
@@ -28,8 +27,8 @@ public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
 	std::weak_ptr<CameraComponent> camera; // camera component
-	// light.....
-	std::vector< std::weak_ptr<LightComponent> > lights;
+	// for light
+	std::unique_ptr<LightManager> light_manager;
 
 public:
 	RenderManager();

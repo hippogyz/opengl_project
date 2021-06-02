@@ -5,7 +5,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Component/CameraComponent.h"
-#include "Component/LightComponent.h"
+#include "LightManager.h"
 
 const unsigned int RenderManager::SCR_WIDTH = 600;
 const unsigned int RenderManager::SCR_HEIGHT = 600;
@@ -13,6 +13,8 @@ const unsigned int RenderManager::SCR_HEIGHT = 600;
 RenderManager::RenderManager()
 {
     std::cout << "render manager building" << std::endl;
+
+    light_manager = std::make_unique<LightManager>();
 
     window_time = 0;
     mouse_position[0] = 0.0;
@@ -75,6 +77,7 @@ void RenderManager::BeforeRender(float delta)
     // update window
     window_time += delta;
     glfwGetWindowSize(window, &(window_size[0]), &(window_size[1]));
+    glfwGetCursorPos(window, &(mouse_position[0]), &(mouse_position[1]));
     
     // update camera
     std::shared_ptr<CameraComponent> current_camera = camera.lock();
@@ -86,20 +89,8 @@ void RenderManager::BeforeRender(float delta)
 
     // update projection
      projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
-    
-    // update light
-     for (auto&& c_light : lights)
-     {
-         std::shared_ptr<LightComponent> current_light = c_light.lock();
-         for (auto&& shader : shaders)
-         {
-             shader->useShader();
-             current_light->light->setLight(*shader, current_light->light->light_type);
-         }
-     }
 
-     lights.clear();
-
+     // update shaders
     for (auto&& shader : shaders)
     {
         shader->useShader();
@@ -113,6 +104,9 @@ void RenderManager::BeforeRender(float delta)
         shader->setFloat("u_resolution", float(window_size[0]), float(window_size[1]));
 
         shader->setFloat("camera_position", camera_position.x, camera_position.y, camera_position.z);
+
+        // update light
+        light_manager->set_light(*shader);
     }
 }
 

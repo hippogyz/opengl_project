@@ -77,7 +77,10 @@ void Game::initialize()
 	(*obj)->addComponent<FPSControlComponent>(obj->get());
 	
 	obj++;
-	(*obj)->addComponent<LightComponent>(obj->get());
+	std::shared_ptr<LightComponent> light = (*obj)->addComponent<LightComponent>(obj->get());
+	light->initializeLight<SpotLight>(true, glm::vec3(0.7), glm::vec3(1.0), glm::vec3(3.0), glm::vec3(-1.0));// diffuse color; specular color; position; direction
+		// light sources need a specific shader for figuring out where they are
+
 }
 
 void Game::uninitialize()

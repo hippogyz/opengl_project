@@ -37,13 +37,13 @@ bool InputManager::exit_window()
 
 void InputManager::process_input(float delta)
 {
-	// exit game
+	// update key state
 	for (auto it = key_list.begin(); it != key_list.end(); ++it)
 	{
 		it->second.last = it->second.current;
 		it->second.current = glfwGetKey(window, it->second.glfw_order) == GLFW_PRESS;
 	}
-	// something else maybe
+	// update cursor
 	if (!cursor_moved)
 	{
 		cursor_move[0] = 0.0f;
