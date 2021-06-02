@@ -10,7 +10,7 @@ Light::Light(bool is_active, glm::vec3 diffuse, glm::vec3 specular):
 DirLight::DirLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction):
 	Light(is_active, diffuse, specular), direction(direction)
 {
-
+	light_type = "dir_light";
 }
 
 void DirLight::setLight(Shader& shader_prog, const char* name)
@@ -26,7 +26,7 @@ PointLight::PointLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular,
 	glm::vec3 position, float decay_0, float decay_1, float decay_2) :
 	Light(is_active, diffuse, specular), position(position), decay_0(decay_0), decay_1(decay_1), decay_2(decay_2)
 {
-
+	light_type = "point_light";
 }
 
 void PointLight::setLight(Shader& shader_prog, const char* name)
@@ -47,7 +47,7 @@ SpotLight::SpotLight(bool is_active, glm::vec3 diffuse, glm::vec3 specular,
 	PointLight(is_active, diffuse, specular, position, decay_0, decay_1, decay_2),
 	direction(direction), inner_cone(inner_cone), outer_cone(outer_cone)
 {
-
+	light_type = "spot_light";
 }
 
 void SpotLight::setLight(Shader& shader_prog, const char* name)

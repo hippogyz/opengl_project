@@ -17,6 +17,7 @@ public:
 	virtual ~Light() {};
 
 	bool is_active;
+	const char* light_type;
 
 protected:
 	glm::vec3 diffuse;

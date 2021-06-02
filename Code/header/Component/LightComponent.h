@@ -24,6 +24,6 @@ protected:
 template <typename LightType, typename... Args>
 void LightComponent::initializeLight(Args&&... args)
 {
-	light = std::make_shared<LightType>(args);
+	light = std::make_shared<LightType>(std::forward<Args>(args)...);
 	this->is_active = light->is_active;
 }

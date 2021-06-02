@@ -10,6 +10,7 @@
 #include "TestObject/CubicMoveComponent.h"
 #include "Component/TransformComponent.h"
 #include "Component/CameraComponent.h"
+#include "Component/LightComponent.h"
 #include "Component/FPSControlComponent.h"
 #include "Model.h"
 #include "Shader.h"
@@ -58,6 +59,7 @@ void Game::initialize()
 	add_object<Cubic>("Cubic(1)");
 	add_object<Cubic>("Cubic(2)");
 	add_object<GameObject>("temp_camera");
+	add_object<GameObject>("test_light");
 
 	arrange_object_list();
 
@@ -73,6 +75,9 @@ void Game::initialize()
 	(*obj)->transform->set_local_position(glm::vec3(-10.0, 0.0, -3.0));
 	(*obj)->addComponent<CameraComponent>(obj->get());
 	(*obj)->addComponent<FPSControlComponent>(obj->get());
+	
+	obj++;
+	(*obj)->addComponent<LightComponent>(obj->get());
 }
 
 void Game::uninitialize()

@@ -16,6 +16,7 @@ class Model;
 class Light;
 class GameObject;
 class CameraComponent;
+class LightComponent;
 struct Vertex;
 struct Texture;
 
@@ -28,6 +29,7 @@ public:
 	std::vector< std::shared_ptr<Model> > models;
 	std::weak_ptr<CameraComponent> camera; // camera component
 	// light.....
+	std::vector< std::weak_ptr<LightComponent> > lights;
 
 public:
 	RenderManager();

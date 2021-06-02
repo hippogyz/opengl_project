@@ -10,7 +10,7 @@ Mesh::Mesh(std::vector< Vertex > vertices, std::vector< unsigned int > indices, 
 	this->indices = indices;
 	this->textures = textures;
 
-    ambient = 0.5;
+    ambient = 0.1;
     shininess = 256.0;
 
 	initialize_mesh();

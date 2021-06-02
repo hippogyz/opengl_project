@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Component/CameraComponent.h"
+#include "Component/LightComponent.h"
 
 const unsigned int RenderManager::SCR_WIDTH = 600;
 const unsigned int RenderManager::SCR_HEIGHT = 600;
@@ -87,6 +88,17 @@ void RenderManager::BeforeRender(float delta)
      projection = glm::perspective(glm::radians(45.0f), float(window_size[0]) / float(window_size[1]), 0.1f, 100.0f);
     
     // update light
+     for (auto&& c_light : lights)
+     {
+         std::shared_ptr<LightComponent> current_light = c_light.lock();
+         for (auto&& shader : shaders)
+         {
+             shader->useShader();
+             current_light->light->setLight(*shader, current_light->light->light_type);
+         }
+     }
+
+     lights.clear();
 
     for (auto&& shader : shaders)
     {
