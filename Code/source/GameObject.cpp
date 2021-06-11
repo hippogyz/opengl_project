@@ -23,6 +23,11 @@ GameObject::~GameObject()
 
 }
 
+void GameObject::initialize_object()
+{
+
+}
+
 void GameObject::uniform_update(float delta)
 {
 	arrangeComponent();

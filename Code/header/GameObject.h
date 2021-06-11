@@ -22,6 +22,8 @@ public: // method
 	GameObject(std::string name, bool active = true);
 	virtual ~GameObject();
 
+	virtual void initialize_object();
+
 	//void process_input(float delta);
 	void uniform_update(float delta);
 	void physics_update(float delta);

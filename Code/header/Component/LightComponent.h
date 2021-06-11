@@ -15,6 +15,7 @@ public:
 	void initializeLight(Args&&... args);
 
 	std::shared_ptr<Light> light;
+	void update_trans_information();
 
 protected:
 	virtual void update(float delta);

@@ -40,6 +40,8 @@ void LightManager::set_light(Shader& shader_prog)
 
 	for (int i = 0; i < list_size; ++i)
 	{
+		point_light[i].lock()->update_trans_information();
+
 		if (point_limit > 1)
 		{
 			point_light[i].lock()->light->setLightWithIndex(shader_prog, i);
@@ -57,6 +59,8 @@ void LightManager::set_light(Shader& shader_prog)
 
 	for (int i = 0; i < list_size; ++i)
 	{
+		dir_light[i].lock()->update_trans_information();
+
 		if (dir_limit > 1)
 		{
 			dir_light[i].lock()->light->setLightWithIndex(shader_prog, i);
@@ -74,6 +78,8 @@ void LightManager::set_light(Shader& shader_prog)
 
 	for (int i = 0; i < list_size; ++i)
 	{
+		spot_light[i].lock()->update_trans_information();
+
 		if (spot_limit > 1)
 		{
 			spot_light[i].lock()->light->setLightWithIndex(shader_prog, i);

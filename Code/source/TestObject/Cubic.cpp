@@ -11,12 +11,31 @@
 #include "TestObject/CubicComponent.h"
 #include "TestObject/CubicMoveComponent.h"
 
-static std::vector<Vertex> set_cubic_vertices();
-static std::vector<unsigned int> set_cubic_indices();
-static std::vector<Texture> set_cubic_textures();
-static unsigned int texture_from_file(std::string filename);
+//static std::vector<Vertex> set_cubic_vertices();
+//static std::vector<unsigned int> set_cubic_indices();
+//static std::vector<Texture> set_cubic_textures();
+//static unsigned int texture_from_file(std::string filename);
 
 Cubic::Cubic(std::string name, bool active) : GameObject(name, active)
+{
+}
+
+Cubic::Cubic(glm::vec3 position, std::string name, bool active) : GameObject(name, active)
+{
+	transform->set_local_position(position);
+}
+
+Cubic::Cubic(glm::vec3 position, glm::vec3 direction, std::string name, bool active) : GameObject(name, active)
+{
+	transform->set_local_position(position);
+
+	glm::vec3 dir = glm::normalize(direction);
+	float r_pitch = glm::asin(dir.y);
+	float r_yaw = (dir.z < 0) ? glm::acos(dir.x) : - glm::acos(dir.x);
+	transform->set_local_rotation(glm::degrees(r_pitch), glm::degrees(r_yaw), 0);
+}
+
+void Cubic::initialize_object()
 {
 	initialize_cubic();
 }
@@ -24,8 +43,13 @@ Cubic::Cubic(std::string name, bool active) : GameObject(name, active)
 void Cubic::initialize_cubic()
 {
 	static std::vector<Vertex> vertices = set_cubic_vertices();
+
 	static std::vector<unsigned int> indices = set_cubic_indices();
-	static std::vector<Texture> textures = set_cubic_textures();
+	
+	std::string texture_path[] = { "opengl_project/Resource/test_texture.jpg", "opengl_project/Resource/test_specular_texture.jpg" };
+	Texture_Type texture_type[] = { DIFFUSE_TEXT, SPECULAR_TEXT };
+	static std::vector<Texture> textures = set_cubic_textures(2, texture_path, texture_type);
+	
 	static const char* vs_path = "opengl_project/Code/shader/vertex_shader.vs";
 	static const char* fs_path = "opengl_project/Code/shader/frag_shader.fs";
 
@@ -40,7 +64,7 @@ void Cubic::update(float delta)
 
 }
 
-static std::vector<Vertex> set_cubic_vertices()
+std::vector<Vertex> Cubic::set_cubic_vertices()
 {
 	float vertex_data[] = {
 	-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0,  0.0f, 0.0f,
@@ -93,7 +117,7 @@ static std::vector<Vertex> set_cubic_vertices()
 	return vertices;
 }
 
-static std::vector<unsigned int> set_cubic_indices()
+std::vector<unsigned int> Cubic::set_cubic_indices()
 {
 	unsigned int indices_data[] = {
 	0, 1, 2,
@@ -118,13 +142,13 @@ static std::vector<unsigned int> set_cubic_indices()
 	return std::vector<unsigned int> (indices_data, indices_data + 36);
 }
 
-static std::vector<Texture> set_cubic_textures()
+std::vector<Texture> Cubic::set_cubic_textures(int texture_num, std::string texture_path[], Texture_Type texture_type[])
 {
 	std::vector<Texture> textures;
 
-	int texture_num = 2;
-	std::string texture_path[] = { "opengl_project/Resource/test_texture.jpg", "opengl_project/Resource/test_specular_texture.jpg" };
-	Texture_Type texture_type [] = { DIFFUSE_TEXT, SPECULAR_TEXT };
+//	int texture_num = 2;
+//	std::string texture_path[] = { "opengl_project/Resource/test_texture.jpg", "opengl_project/Resource/test_specular_texture.jpg" };
+//	Texture_Type texture_type [] = { DIFFUSE_TEXT, SPECULAR_TEXT };
 	
 	for (int i = 0; i < texture_num; ++i)
 	{
@@ -140,7 +164,7 @@ static std::vector<Texture> set_cubic_textures()
 	return textures;
 }
 
-static unsigned int texture_from_file(std::string filename)
+unsigned int Cubic::texture_from_file(std::string filename)
 {
 	unsigned int id;
 

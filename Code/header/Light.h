@@ -25,6 +25,9 @@ public:
 	static const char* point_name;
 	static const char* spot_name;
 
+	glm::vec3 position;
+	glm::vec3 direction;
+
 protected:
 	glm::vec3 diffuse;
 	glm::vec3 specular;
@@ -36,9 +39,6 @@ public:
 
 	virtual void setLight(Shader& shader_prog, const char* name);
 	virtual ~DirLight() {};
-
-protected:
-	glm::vec3 direction;
 };
 
 class PointLight : public Light {
@@ -50,8 +50,6 @@ public:
 	virtual ~PointLight() {};
 
 protected:
-	glm::vec3 position;
-
 	float decay_0;
 	float decay_1;
 	float decay_2;
@@ -67,8 +65,6 @@ public:
 	virtual ~SpotLight() {};
 
 protected:
-	glm::vec3 direction;
-
 	float inner_cone;
 	float outer_cone;
 };
