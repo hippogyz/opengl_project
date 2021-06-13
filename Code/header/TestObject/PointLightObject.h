@@ -5,9 +5,8 @@
 class PointLightObject : public Cubic
 {
 public:
-	PointLightObject(std::string name, bool active = true);
-	PointLightObject(glm::vec3 position, std::string name, bool active = true);
-	PointLightObject(glm::vec3 position, glm::vec3 direction, std::string name, bool active = true);
+	PointLightObject(std::string name, bool active = false);
+	PointLightObject(glm::vec3 position, std::string name, bool active = false);
 	virtual ~PointLightObject() {};
 	virtual void initialize_object();
 

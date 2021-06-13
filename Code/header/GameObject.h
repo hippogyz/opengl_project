@@ -19,7 +19,7 @@ public: // member
 	std::shared_ptr<RenderComponent> renderer;
 
 public: // method
-	GameObject(std::string name, bool active = true);
+	GameObject(std::string name, bool active = false);
 	virtual ~GameObject();
 
 	virtual void initialize_object();

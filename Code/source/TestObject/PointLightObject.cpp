@@ -8,7 +8,7 @@
 
 PointLightObject::PointLightObject(std::string name, bool active) : Cubic(name, active)
 {
-
+	transform->set_local_scale(0.5f);
 }
 
 PointLightObject::PointLightObject(glm::vec3 position, std::string name, bool active) : Cubic(position, name, active)
@@ -16,13 +16,9 @@ PointLightObject::PointLightObject(glm::vec3 position, std::string name, bool ac
 	transform->set_local_scale(0.5f);
 }
 
-PointLightObject::PointLightObject(glm::vec3 position, glm::vec3 direction, std::string name, bool active) : Cubic(position, direction, name, active)
-{
-	transform->set_local_scale(0.5f);
-}
-
 void PointLightObject::initialize_object()
 {
+	is_active = true;
 	initialize_point_light();
 }
 
@@ -43,5 +39,6 @@ void PointLightObject::initialize_point_light()
 	auto light = addComponent<LightComponent>(this);
 
 	light->initializeLight<PointLight>(true, glm::vec3(0.7), glm::vec3(1.0), glm::vec3(0.0));
+//	light->initializeLight<SpotLight>(true, glm::vec3(0.7), glm::vec3(1.0), glm::vec3(0.0), glm::vec3(1.0));
 	light->update_trans_information();
 }

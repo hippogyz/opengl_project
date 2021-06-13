@@ -366,3 +366,22 @@ void TransformComponent::set_global_position_and_rotation(const glm::vec3 global
 	g_position = global_position;
 	g_rotation = global_rotation;
 }
+
+void TransformComponent::set_global_scale(const float global_scale)
+{
+	global_mode = true;
+	g_scale = global_scale;
+}
+
+void TransformComponent::look_at(const glm::vec3& direction, const glm::vec3& up)
+{
+	// x - front, y, z - right
+	glm::vec3 front = glm::normalize(direction);
+	glm::vec3 right = glm::cross(front, up);
+	right = (right != glm::vec3(0.0f)) ? glm::normalize(right) : glm::vec3(up.z, up.x, up.y);
+	glm::vec3 y_axis = glm::cross(right, front);
+
+	glm::mat3 rot = { front, y_axis, right };
+
+	set_local_rotation(glm::quat_cast(rot));
+}

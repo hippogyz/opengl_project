@@ -53,9 +53,13 @@ public:
 	void local_rotate(const glm::vec3& axis, const float angle);
 	void local_zoom(const float zoom);
 
+	void look_at(const glm::vec3& direction, const glm::vec3& up = { 0.0, 1.0, 0.0 });// lookAt ( local, x-axis, call it before physics part )
+
+
 	void set_global_position_and_rotation(const glm::vec3& global_position, const glm::quat& global_rotation);
 	void set_global_position_and_rotation(const glm::vec3& global_position, const glm::vec3& axis, const float angle);
 	void set_global_position_and_rotation(const glm::vec3 global_position, const float pitch, const float yaw, const float roll);
+	void set_global_scale(const float global_scale);
 
 protected:
 	virtual void update(float delta);

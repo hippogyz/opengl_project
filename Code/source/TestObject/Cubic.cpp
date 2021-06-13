@@ -29,14 +29,18 @@ Cubic::Cubic(glm::vec3 position, glm::vec3 direction, std::string name, bool act
 {
 	transform->set_local_position(position);
 
+	transform->look_at(direction);
+	/*
 	glm::vec3 dir = glm::normalize(direction);
 	float r_pitch = glm::asin(dir.y);
 	float r_yaw = (dir.z < 0) ? glm::acos(dir.x) : - glm::acos(dir.x);
 	transform->set_local_rotation(glm::degrees(r_pitch), glm::degrees(r_yaw), 0);
+	*/
 }
 
 void Cubic::initialize_object()
 {
+	is_active = true;
 	initialize_cubic();
 }
 

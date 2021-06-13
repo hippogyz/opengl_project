@@ -8,6 +8,7 @@
 // for test
 #include "TestObject/Cubic.h"
 #include "TestObject/PointLightObject.h"
+#include "TestObject/SpotLightObject.h"
 #include "TestObject/CubicMoveComponent.h"
 #include "Component/TransformComponent.h"
 #include "Component/CameraComponent.h"
@@ -60,7 +61,8 @@ void Game::initialize()
 	add_object<Cubic>(glm::vec3(0.0, 0.5, -5.0), "Cubic(1)");
 	add_object<Cubic>(glm::vec3(1.0, -0.5, -2.0), "Cubic(2)");
 	add_object<GameObject>("temp_camera");
-	add_object<PointLightObject>(glm::vec3(-5.0f, -2.0f, -5.0f), glm::vec3(1.0f),"test_point_light");
+	add_object<PointLightObject>(glm::vec3(-3.0f, -2.0f, -5.0f),"test_point_light");
+	add_object<SpotLightObject>(glm::vec3(5.0f), glm::vec3(-1.0f), "test_spot_light");
 	add_object<GameObject>("dir_light");
 
 	arrange_object_list();
@@ -91,8 +93,13 @@ void Game::initialize()
 	obj++;
 	(*obj)->initialize_object();
 
+	// spot light
+	obj++;
+	(*obj)->initialize_object();
+
 	// dir light
 	obj++;
+	(*obj)->initialize_object();
 	std::shared_ptr<LightComponent> light = (*obj)->addComponent<LightComponent>(obj->get());
 	light->initializeLight<DirLight>(true, glm::vec3(0.6, 0.6, 0.0), glm::vec3(1.0), glm::vec3(0.0f));
 	(*obj)->transform->set_local_rotation(glm::vec3(0.0, 0.0, 1.0), 90);

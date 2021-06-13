@@ -6,9 +6,9 @@
 class Cubic : public GameObject
 {
 public:
-	Cubic(std::string name, bool active = true);
-	Cubic(glm::vec3 position, std::string name, bool active = true);
-	Cubic(glm::vec3 position, glm::vec3 direction, std::string name, bool active = true);
+	Cubic(std::string name, bool active = false);
+	Cubic(glm::vec3 position, std::string name, bool active = false);
+	Cubic(glm::vec3 position, glm::vec3 direction, std::string name, bool active = false);
 	virtual ~Cubic() {};
 	virtual void initialize_object();
 

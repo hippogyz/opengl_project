@@ -25,7 +25,7 @@ GameObject::~GameObject()
 
 void GameObject::initialize_object()
 {
-
+	is_active = true;
 }
 
 void GameObject::uniform_update(float delta)
