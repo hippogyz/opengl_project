@@ -121,20 +121,25 @@ void TransformComponent::rename(std::size_t name) // called by gameobject, don't
 
 void TransformComponent::set_parent(GameObject* gameobject)
 {
-	// check whether the new parent is a child
+	// check whether the new parent is a child of itself
 	if (gameobject != nullptr)
 	{
 		std::weak_ptr<TransformComponent> check_trans = gameobject->transform;
 		while (check_trans.lock() != nullptr)
 		{
 			if (check_trans.lock().get() == this)
+			{
+				std::cout << "set parent failed, the new parent should not be the child of current object. " << std::endl;
 				return;
+			}
 
 			check_trans = check_trans.lock()->parent_trans;
 		}
 	}
+
 	// update current transform to load previous changes
 	update_transform();
+
 	// remove it from previous parent
 	std::shared_ptr<TransformComponent> parent_temp = parent_trans.lock();
 	if (parent_temp != nullptr)
@@ -142,6 +147,7 @@ void TransformComponent::set_parent(GameObject* gameobject)
 		parent_temp->chilldren_trans.erase(get_object_hash());
 	}
 	parent_trans.reset();
+
 	// set new parent and update parent's transform
 	if (gameobject != nullptr)
 	{
@@ -162,6 +168,7 @@ void TransformComponent::set_parent(GameObject* gameobject)
 		parents_children_list->insert({ get_object_hash(),this->gameobject->transform });
 		parent_trans = gameobject->transform;
 	}
+
 	// cal new local state
 	global_to_local();
 	dirty_mark = false;

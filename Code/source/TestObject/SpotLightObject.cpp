@@ -38,6 +38,7 @@ void SpotLightObject::initialize_spot_light()
 	static const char* vs_path = "opengl_project/Code/shader/vertex_shader.vs";
 	static const char* fs_path = "opengl_project/Code/shader/ref_frag_shader.fs";
 
+	renderer = std::make_shared<RenderComponent>(this);
 	renderer->initialize_renderer("light_source", vertices, indices, textures, vs_path, fs_path);
 	std::cout << "spot light source builded " << std::endl;
 

@@ -12,6 +12,7 @@ COMPONENT_DEFINITION(Component, RenderComponent);
 RenderComponent::RenderComponent(GameObject* gameobject, int order) : Component(gameobject, order)
 {
 	is_active = false;
+	render_manager = Game::access().render_manager;
 }
 
 RenderComponent::~RenderComponent()
@@ -22,7 +23,7 @@ RenderComponent::~RenderComponent()
 void RenderComponent::initialize_renderer(std::string model_name, std::vector< Vertex > vertices, std::vector< unsigned int > indices,
 																			std::vector<Texture>textures, const char* vs_path, const char* fs_path)
 {
-	RenderManager* render_manager = Game::access().render_manager.get();
+//	RenderManager* render_manager = Game::access().render_manager.get();
 	model = render_manager->assign_model(model_name, vertices, indices, textures );
 	shader = render_manager->assign_shader_VF(vs_path, fs_path);
 	is_active = true;
@@ -30,7 +31,7 @@ void RenderComponent::initialize_renderer(std::string model_name, std::vector< V
 
 void RenderComponent::initialize_renderer(std::string model_path, const char* vs_path, const char* fs_path)
 {
-	RenderManager* render_manager = Game::access().render_manager.get();
+	//RenderManager* render_manager = Game::access().render_manager.get();
 	model = render_manager->assign_model(model_path);
 	shader = render_manager->assign_shader_VF(vs_path, fs_path);
 	is_active = true;
@@ -49,4 +50,12 @@ void RenderComponent::update(float delta)
 	mShader->setTrans("norm_mat", norm_mat);
 
 	model.lock()->Draw(mShader.get());
+}
+
+void RenderComponent::assign_renderer_for_each_frame()
+{
+	if (!is_active)
+		return;
+	
+	render_manager->normal_objects.push_back(gameobject);
 }

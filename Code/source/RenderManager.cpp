@@ -65,14 +65,46 @@ void RenderManager::initializeOpenGL()
 
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-    // enable depth test
+    // enable test
     // ------------------
+    // stencil
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    glStencilFunc(GL_ALWAYS, 0, 0xFF); // always success
+    glStencilMask(0x00); // write nothing
+    // depth
     glEnable(GL_DEPTH_TEST);
+}
+
+void RenderManager::DoRender(float delta)
+{
+    BeforeRender(delta);
+
+    for (auto&& obj : normal_objects)
+    {
+        if (obj->is_active)
+        {
+            obj->render(delta);
+        }
+    }
+    // special render order for stencil test, depth test and more test...
+    for (auto&& obj : special_objects)
+    {
+        if (obj->is_active)
+        {
+            obj->render(delta);
+        }
+    }
+
+    AfterRender(delta);
+
+    normal_objects.clear();
+    special_objects.clear();
 }
 
 void RenderManager::BeforeRender(float delta)
 {
-    clearBuffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    clearBuffer(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // update window
     window_time += delta;
@@ -141,7 +173,7 @@ std::weak_ptr<Model> RenderManager::assign_model(std::string model_path)
     for (auto&& model : models)
     {
         if (model->model_hash == m_hash)
-        {
+        { 
             return std::weak_ptr<Model> (model);
         }
     }

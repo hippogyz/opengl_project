@@ -26,6 +26,9 @@ class RenderManager {
 public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
+
+	std::vector< GameObject* > normal_objects;
+	std::vector< GameObject* > special_objects;
 	std::weak_ptr<CameraComponent> camera; // camera component
 	// for light
 	std::unique_ptr<LightManager> light_manager;
@@ -33,6 +36,8 @@ public:
 public:
 	RenderManager();
 	~RenderManager();
+
+	void DoRender(float delta);
 
 	void BeforeRender(float delta); // update camera for shaders // only called by game, it would be better set as private?
 	void AfterRender(float delta);

@@ -24,7 +24,7 @@ public:
 	void uninitialize();
 	bool game_update(float delta);	
 	template < typename GameObjectType, typename... Args >
-		void add_object(Args&&... args);
+		std::shared_ptr<GameObject> add_object(Args&&... args);
 
 private:
 	bool exit_window;
@@ -43,8 +43,9 @@ private:
 };
 
 template < typename GameObjectType, typename... Args >
-void Game::add_object(Args&&... args)
+std::shared_ptr<GameObject> Game::add_object(Args&&... args)
 {
 	auto game_object = std::make_shared<GameObjectType>(std::forward<Args>(args)...);
 	add_buffer.push_back( game_object );
+	return game_object;
 }

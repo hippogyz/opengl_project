@@ -15,7 +15,7 @@ GameObject::GameObject(std::string name, bool active)
 	first_update = false;
 
 	transform = std::make_shared<TransformComponent>(this);
-	renderer = std::make_shared<RenderComponent>(this);
+	//renderer = std::make_shared<RenderComponent>(this);
 }
 
 GameObject::~GameObject()
@@ -44,6 +44,11 @@ void GameObject::uniform_update(float delta)
 		component->uniform_update(delta);
 	}
 	update(delta);
+
+	if (renderer)
+	{
+		renderer->assign_renderer_for_each_frame();
+	}
 }
 
 void GameObject::physics_update(float delta)

@@ -57,52 +57,37 @@ void Game::execute()
 
 void Game::initialize()
 {
-	add_object<Cubic>(glm::vec3(0.0, -1.0, -3.0), "Cubic(0)");
-	add_object<Cubic>(glm::vec3(0.0, 0.5, -5.0), "Cubic(1)");
-	add_object<Cubic>(glm::vec3(1.0, -0.5, -2.0), "Cubic(2)");
-	add_object<GameObject>("temp_camera");
-	add_object<PointLightObject>(glm::vec3(-3.0f, -2.0f, -5.0f),"test_point_light");
-	add_object<SpotLightObject>(glm::vec3(5.0f), glm::vec3(-1.0f), "test_spot_light");
-	add_object<GameObject>("dir_light");
+	std::shared_ptr<GameObject> obj;
 
-	arrange_object_list();
+	obj = add_object<Cubic>(glm::vec3(0.0, -1.0, -3.0), "Cubic(0)");
+	obj->initialize_object();
 
-	auto obj = object_list.begin();
-	(*obj)->initialize_object();
+	obj = add_object<Cubic>(glm::vec3(0.0, 0.5, -5.0), "Cubic(1)");
+	obj->initialize_object();
 
-	obj++;
-	(*obj)->initialize_object();
-	
-	obj++;
-	(*obj)->initialize_object();
-	(*obj)->addComponent<CubicMoveComponent>( obj->get() );
-	
-	// camera
-	obj++;
-	(*obj)->initialize_object();
-	(*obj)->transform->set_local_position(glm::vec3(-10.0, 0.0, -3.0));
-	(*obj)->addComponent<CameraComponent>(obj->get());
-	(*obj)->addComponent<FPSControlComponent>(obj->get());
-	
-	//obj++;
-	//(*obj)->initialize_object();
-	//std::shared_ptr<LightComponent> light = (*obj)->addComponent<LightComponent>(obj->get());
-	//light->initializeLight<SpotLight>(true, glm::vec3(0.7), glm::vec3(1.0), glm::vec3(3.0), glm::vec3(-1.0));// diffuse color; specular color; position; direction
+	obj = add_object<Cubic>(glm::vec3(1.0, -0.5, -2.0), "Cubic(2)");
+	obj->initialize_object();
+	obj->addComponent<CubicMoveComponent>(obj.get());
 
-	// point light
-	obj++;
-	(*obj)->initialize_object();
+	obj = add_object<GameObject>("temp_camera");
+	obj->initialize_object();
+	obj->transform->set_local_position(glm::vec3(-10.0, 0.0, -3.0));
+	obj->addComponent<CameraComponent>(obj.get());
+	obj->addComponent<FPSControlComponent>(obj.get());
 
-	// spot light
-	obj++;
-	(*obj)->initialize_object();
+	obj = add_object<PointLightObject>(glm::vec3(-3.0f, -2.0f, -5.0f),"test_point_light");
+	obj->initialize_object();
 
-	// dir light
-	obj++;
-	(*obj)->initialize_object();
-	std::shared_ptr<LightComponent> light = (*obj)->addComponent<LightComponent>(obj->get());
+	obj = add_object<SpotLightObject>(glm::vec3(5.0f), glm::vec3(-1.0f), "test_spot_light");
+	obj->initialize_object();
+
+	obj = add_object<GameObject>("dir_light");
+	obj->initialize_object();
+	std::shared_ptr<LightComponent> light = obj->addComponent<LightComponent>(obj.get());
 	light->initializeLight<DirLight>(true, glm::vec3(0.6, 0.6, 0.0), glm::vec3(1.0), glm::vec3(0.0f));
-	(*obj)->transform->set_local_rotation(glm::vec3(0.0, 0.0, 1.0), 90);
+	obj->transform->set_local_rotation(glm::vec3(0.0, 0.0, 1.0), 90);
+
+
 }
 
 void Game::uninitialize()
@@ -135,7 +120,7 @@ void Game::uniform_update(float delta)
 {
 	for (auto&& object : object_list)
 	{
-		if (object->is_alive)
+		if (object->is_active)
 		{
 			 object -> uniform_update(delta);
 		}
@@ -146,7 +131,7 @@ void Game::physics_update(float delta)
 {
 	for (auto&& object : object_list)
 	{
-		if (object->is_alive)
+		if (object->is_active)
 		{
 			object -> physics_update(delta);
 		}
@@ -156,17 +141,7 @@ void Game::physics_update(float delta)
 void Game::render(float delta)
 {
 	// call openGL
-	render_manager->BeforeRender(delta);
-	
-	for (auto&& object : object_list)
-	{
-		if (object->is_alive)
-		{
-			object->render(delta); // with draw call
-		}
-	}
-	
-	render_manager->AfterRender(delta);
+	render_manager->DoRender(delta);
 }
 
 void Game::arrange_object_list()
