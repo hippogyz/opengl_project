@@ -27,6 +27,7 @@ public:
 	std::vector< std::shared_ptr<Shader> > shaders;
 	std::vector< std::shared_ptr<Model> > models;
 
+//	std::vector< std::pair<unsigned int, GameObject*> > render_objects;
 	std::vector< GameObject* > normal_objects;
 	std::vector< GameObject* > special_objects;
 	std::weak_ptr<CameraComponent> camera; // camera component
@@ -39,8 +40,6 @@ public:
 
 	void DoRender(float delta);
 
-	void BeforeRender(float delta); // update camera for shaders // only called by game, it would be better set as private?
-	void AfterRender(float delta);
 
 	std::weak_ptr<Model> assign_model(std::string model_name, std::vector< Vertex > vertices, 
 																	std::vector< unsigned int > indices,	std::vector<Texture>textures );
@@ -65,6 +64,8 @@ private:
 
 private:
 	void initializeOpenGL();
-
 	void clearBuffer(GLenum config);
+
+	void BeforeRender(float delta);
+	void AfterRender(float delta);
 };

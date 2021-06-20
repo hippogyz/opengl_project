@@ -45,14 +45,14 @@ void TransformComponent::initialize()
 {
 	//parent_trans = nullptr;
 	position = glm::vec3(0.0);
-	rotation = glm::quat(1.0, 0.0, 0.0, 0.0);
+	rotation = glm::quat_cast(glm::mat3{ { 1.0, 0.0, 0.0 }, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} });
 	scale = 1.0;
 
 	global_mode = false;
 	dirty_mark = false;
 
 	g_position = glm::vec3(0.0);
-	g_rotation = glm::quat(1.0, 0.0, 0.0, 0.0);
+	g_rotation = glm::quat_cast(glm::mat3{ { 1.0, 0.0, 0.0 }, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0} });
 	g_scale = 1.0;
 	trans_matrix = glm::mat4(1.0);
 }
@@ -101,6 +101,7 @@ void TransformComponent::update_transform()
 
 void TransformComponent::cal_trans_matrix()
 {
+	local_to_global();
 	// use global state
 	trans_matrix = glm::mat4(1.0);
 	trans_matrix = glm::translate(trans_matrix, g_position);

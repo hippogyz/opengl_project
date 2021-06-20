@@ -8,8 +8,10 @@
 
 #include "Component/TransformComponent.h"
 #include "Component/RenderComponent.h"
+#include "Component/StencilRenderComponent.h"
 #include "TestObject/CubicComponent.h"
 #include "TestObject/CubicMoveComponent.h"
+
 
 //static std::vector<Vertex> set_cubic_vertices();
 //static std::vector<unsigned int> set_cubic_indices();
@@ -57,7 +59,11 @@ void Cubic::initialize_cubic()
 	static const char* vs_path = "opengl_project/Code/shader/vertex_shader.vs";
 	static const char* fs_path = "opengl_project/Code/shader/frag_shader.fs";
 
-	renderer = std::make_shared<RenderComponent>(this);
+	auto stencil_renderer = std::make_shared<StencilRenderComponent>(this);
+	stencil_renderer->default_stencil_set();
+
+	renderer = stencil_renderer;
+//	renderer = std::make_shared<RenderComponent>(this);
 	renderer->initialize_renderer("cubic_model", vertices, indices, textures, vs_path, fs_path);
 	std::cout << "cubic builded " << std::endl;
 

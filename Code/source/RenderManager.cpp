@@ -71,7 +71,7 @@ void RenderManager::initializeOpenGL()
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF); // always success
-    glStencilMask(0x00); // write nothing
+    glStencilMask(0xFF); // this will influence glClear
     // depth
     glEnable(GL_DEPTH_TEST);
 }

@@ -10,6 +10,7 @@
 #include "TestObject/PointLightObject.h"
 #include "TestObject/SpotLightObject.h"
 #include "TestObject/CubicMoveComponent.h"
+#include "TestObject/ChosenEffect.h"
 #include "Component/TransformComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/LightComponent.h"
@@ -58,6 +59,7 @@ void Game::execute()
 void Game::initialize()
 {
 	std::shared_ptr<GameObject> obj;
+	std::shared_ptr<GameObject> obj2;
 
 	obj = add_object<Cubic>(glm::vec3(0.0, -1.0, -3.0), "Cubic(0)");
 	obj->initialize_object();
@@ -68,6 +70,9 @@ void Game::initialize()
 	obj = add_object<Cubic>(glm::vec3(1.0, -0.5, -2.0), "Cubic(2)");
 	obj->initialize_object();
 	obj->addComponent<CubicMoveComponent>(obj.get());
+
+	obj2 = add_object<ChosenEffect>(obj.get());
+	obj2->initialize_object();
 
 	obj = add_object<GameObject>("temp_camera");
 	obj->initialize_object();
@@ -86,7 +91,6 @@ void Game::initialize()
 	std::shared_ptr<LightComponent> light = obj->addComponent<LightComponent>(obj.get());
 	light->initializeLight<DirLight>(true, glm::vec3(0.6, 0.6, 0.0), glm::vec3(1.0), glm::vec3(0.0f));
 	obj->transform->set_local_rotation(glm::vec3(0.0, 0.0, 1.0), 90);
-
 
 }
 

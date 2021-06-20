@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-enum RenderArray { NORMAL = 1, SPECIAL = 2 };
+enum RenderArray { NORMAL_RENDER_ORDER = 1, SPECIAL_RENDER_ORDER = 2 };
 
 class StencilRenderComponent : public RenderComponent
 {
@@ -21,6 +21,9 @@ public:
 	void set_stencil_ref(unsigned int ref);
 	void set_stencil_func(GLenum func);
 	void set_render_array(RenderArray render_order);
+
+	void default_stencil_set();
+	void default_effect_stencil_set();
 
 protected:
 	virtual void update(float delta);

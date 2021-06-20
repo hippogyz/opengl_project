@@ -37,6 +37,13 @@ void RenderComponent::initialize_renderer(std::string model_path, const char* vs
 	is_active = true;
 }
 
+void RenderComponent::initialize_renderer(std::weak_ptr<Model>& model, const char* vs_path, const char* fs_path)
+{
+	this->model = model;
+	shader = render_manager->assign_shader_VF(vs_path, fs_path);
+	is_active = true;
+}
+
 // for RenderComponent, update is equal to render
 void RenderComponent::update(float delta) 
 {
