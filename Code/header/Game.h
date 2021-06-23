@@ -46,6 +46,7 @@ template < typename GameObjectType, typename... Args >
 std::shared_ptr<GameObject> Game::add_object(Args&&... args)
 {
 	auto game_object = std::make_shared<GameObjectType>(std::forward<Args>(args)...);
+	game_object->initialize_object();
 	add_buffer.push_back( game_object );
 	return game_object;
 }

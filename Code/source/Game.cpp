@@ -62,32 +62,32 @@ void Game::initialize()
 	std::shared_ptr<GameObject> obj2;
 
 	obj = add_object<Cubic>(glm::vec3(0.0, -1.0, -3.0), "Cubic(0)");
-	obj->initialize_object();
+	//obj->initialize_object();
 
 	obj = add_object<Cubic>(glm::vec3(0.0, 0.5, -5.0), "Cubic(1)");
-	obj->initialize_object();
+	//obj->initialize_object();
 
 	obj = add_object<Cubic>(glm::vec3(1.0, -0.5, -2.0), "Cubic(2)");
-	obj->initialize_object();
+	//obj->initialize_object();
 	obj->addComponent<CubicMoveComponent>(obj.get());
 
 	obj2 = add_object<ChosenEffect>(obj.get());
-	obj2->initialize_object();
+	//obj2->initialize_object();
 
 	obj = add_object<GameObject>("temp_camera");
-	obj->initialize_object();
+	//obj->initialize_object();
 	obj->transform->set_local_position(glm::vec3(-10.0, 0.0, -3.0));
 	obj->addComponent<CameraComponent>(obj.get());
 	obj->addComponent<FPSControlComponent>(obj.get());
 
 	obj = add_object<PointLightObject>(glm::vec3(-3.0f, -2.0f, -5.0f),"test_point_light");
-	obj->initialize_object();
+	//obj->initialize_object();
 
 	obj = add_object<SpotLightObject>(glm::vec3(5.0f), glm::vec3(-1.0f), "test_spot_light");
-	obj->initialize_object();
+	//obj->initialize_object();
 
 	obj = add_object<GameObject>("dir_light");
-	obj->initialize_object();
+	//obj->initialize_object();
 	std::shared_ptr<LightComponent> light = obj->addComponent<LightComponent>(obj.get());
 	light->initializeLight<DirLight>(true, glm::vec3(0.6, 0.6, 0.0), glm::vec3(1.0), glm::vec3(0.0f));
 	obj->transform->set_local_rotation(glm::vec3(0.0, 0.0, 1.0), 90);
